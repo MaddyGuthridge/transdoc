@@ -8,10 +8,12 @@ __all__ = [
     '__version__',
     'main',
     'TransdocHandler',
-    'Rule',
+    'TransdocTransformer',
+    'TransdocRule',
 ]
 
 from .__consts import VERSION as __version__
 from .handlers import TransdocHandler
-from .__rule import Rule
+from .__transformer import TransdocTransformer
+from .__rule import TransdocRule
 from .__processor import main

@@ -4,10 +4,10 @@
 Code for collecting rules from a module.
 """
 from types import ModuleType
-from .__rule import Rule
+from .__rule import TransdocRule
 
 
-def collect_rules(module: ModuleType) -> dict[str, Rule]:
+def collect_rules(module: ModuleType) -> dict[str, TransdocRule]:
     """
     Collect rules from the given module
 
