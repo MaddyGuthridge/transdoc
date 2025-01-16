@@ -32,3 +32,16 @@ class SourcePos:
         else:
             last_row = string.rsplit('\n', 1)[-1]
             return SourcePos(self.row + row_offset, len(last_row) + 1)
+
+
+@dataclass(frozen=True)
+class SourceRange:
+    """
+    A range of positions within a source file.
+
+    Range is from `start <= p < end`.
+    """
+    start: SourcePos
+    """Start position"""
+    end: SourcePos
+    """End position (exclusive)"""
