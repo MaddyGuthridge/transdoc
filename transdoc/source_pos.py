@@ -16,6 +16,9 @@ class SourcePos:
     col: int
     """File col (1-indexed)"""
 
+    def __str__(self) -> str:
+        return f"{self.row}:{self.col}"
+
     def __add__(self, other: 'SourcePos') -> 'SourcePos':
         if other.row == 1:
             # No change in row, offset column
@@ -24,7 +27,10 @@ class SourcePos:
             # Change in row, use other col
             return SourcePos(self.row + other.row - 1, other.col)
 
-    def offset_by_string(self, string: str) -> 'SourcePos':
+    def offset_by_str(self, string: str) -> 'SourcePos':
+        """
+        Return a new `SourcePos` offset by the contents of the given string.
+        """
         row_offset = string.count('\n')
 
         if row_offset == 0:
