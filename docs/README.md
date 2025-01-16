@@ -1,4 +1,4 @@
-# Transdoc
+# 🏳️‍⚧️ Transdoc 🏳️‍⚧️
 
 A simple transformation system for documentation, where Python functions are
 used to add to documentation.

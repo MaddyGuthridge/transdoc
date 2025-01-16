@@ -5,7 +5,7 @@ A Transdoc handler for plain-text files.
 """
 
 import re
-from pathlib import Path
+from typing import IO
 from transdoc import TransdocTransformer
 from transdoc.handlers import TransdocHandler
 
@@ -25,12 +25,16 @@ class PlaintextHandler:
     def transform_file(
         self,
         transformer: TransdocTransformer,
-        in_path: Path,
-        out_path: Path,
+        in_path: str,
+        in_file: IO,
+        out_file: IO | None,
     ):
-        with open(in_path) as in_file:
-            with open(out_path) as out_file:
-                out_file.write(transformer.apply(in_file.read(), in_path))
+        # Intentionally ignore exceptions, allowing them to fall through to
+        # The caller
+        transformed = transformer.transform(in_file.read(), in_path)
+
+        if out_file is not None:
+            out_file.write(transformed)
 
 
 if __name__ == '__main__':
