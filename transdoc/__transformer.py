@@ -9,7 +9,7 @@ import re
 
 from transdoc import TransdocRule
 from transdoc.source_pos import SourcePos, SourceRange
-from ..transdoc.errors import (
+from transdoc.errors import (
     TransdocError,
     TransdocEvaluationError,
     TransdocSyntaxError,
@@ -21,7 +21,7 @@ def indent_by(indent: str, string: str) -> str:
     """
     Indent the given string using the given indentation.
     """
-    return '\n'.join(
+    return "\n".join(
         [f"{indent}{line.rstrip()}" for line in string.splitlines()]
     ).lstrip()
 
@@ -46,18 +46,18 @@ class TransdocTransformer:
 
         Returns the output of the given command.
         """
+
         def name_error(name: str):
             """Report a NameError"""
             return TransdocNameError(
-                filename,
-                position,
-                f"Unrecognised rule name '{rule}'"
+                filename, position, f"Unrecognised rule name '{rule}'"
             )
 
         def eval_error():
             return TransdocEvaluationError(
                 filename,
                 position,
+                "An error occurred while evaluating the rule",
             )
 
         # If it's just a function name, evaluate it as a call with no arguments
@@ -70,9 +70,11 @@ class TransdocTransformer:
                 raise eval_error() from e
         # If it uses square brackets, then extract the contained string, and
         # pass that
-        if rule.split('[')[0].isidentifier() and rule.endswith(']'):
-            rule_name, content_str = rule.split('[', 1)
-            if rule not in self.__rules:
+        if rule.split("[")[0].isidentifier() and rule.endswith("]"):
+            rule_name, content_str = rule.split("[", 1)
+            # Remove final `]`
+            content_str = content_str[:-1]
+            if rule_name not in self.__rules:
                 raise name_error(rule_name)
             try:
                 return indent_by(indent, self.__rules[rule_name](content_str))
@@ -81,8 +83,8 @@ class TransdocTransformer:
         # Otherwise, it should be a regular function call
         # This calls `eval` with the rules dictionary set as the globals, since
         # otherwise it'd just be too complex to parse things.
-        if rule.split('(')[0].isidentifier() and rule.endswith(')'):
-            rule_name = rule.split('(', 1)[0]
+        if rule.split("(")[0].isidentifier() and rule.endswith(")"):
+            rule_name = rule.split("(", 1)[0]
             if rule_name not in self.__rules:
                 raise name_error(rule_name)
             try:
@@ -93,9 +95,7 @@ class TransdocTransformer:
         # If we reach this point, it's not valid data, and we should give an
         # error
         raise TransdocSyntaxError(
-            filename,
-            position,
-            "unable to evaluate rule due to invalid syntax"
+            filename, position, "unable to evaluate rule due to invalid syntax"
         )
 
     def transform(
@@ -103,7 +103,7 @@ class TransdocTransformer:
         input: str,
         filename: str,
         position_offset: SourcePos = SourcePos(1, 1),
-        indentation: str = '',
+        indentation: str = "",
     ) -> str:
         """
         Apply the Transdoc rules to the given input, returning the result.
@@ -124,7 +124,7 @@ class TransdocTransformer:
         # .+?   => any characters, non-greedy to avoid matching the entire
         #          input (including new-lines due to `re.DOTALL`)
         # \}\}  => closing '}}'
-        rule_call_regex = re.compile(r'\{\{.+?\}\}', re.DOTALL)
+        rule_call_regex = re.compile(r"\{\{.+?\}\}", re.DOTALL)
 
         # Output buffer
         output = StringIO()
@@ -134,19 +134,28 @@ class TransdocTransformer:
 
         for match in rule_call_regex.finditer(input):
             # Rule call, excluding leading '{{' and trailing '}}'
-            rule_call = match.string[2:-2]
-            start = position_offset.offset_by_str(
-                indentation[:match.start()])
-            end = position_offset.offset_by_str(indentation[:match.end()])
+            rule_call = match.group(0)[2:-2]
+            start = position_offset.offset_by_str(indentation[: match.start()])
+            end = position_offset.offset_by_str(indentation[: match.end()])
 
             # Add non-matched input to output
-            output.write(input[input_pos:start])
+            output.write(input[input_pos : match.start()])
+            input_pos = match.end()
 
             try:
-                output.write(self.__eval_rule(
-                    rule_call, filename, SourceRange(start, end), indentation))
+                output.write(
+                    self.__eval_rule(
+                        rule_call,
+                        filename,
+                        SourceRange(start, end),
+                        indentation,
+                    )
+                )
             except TransdocError as e:
                 errors.append(e)
+
+        # Finally, write remaining string
+        output.write(input[input_pos:])
 
         # Check for un-closed instances of {{
         # Derived from: https://stackoverflow.com/a/406408/6335363
@@ -156,17 +165,25 @@ class TransdocTransformer:
         #                  until it is found
         # $             => end of string
         unclosed_regex = re.compile(
-            r'\{\{((?!\}\}).)*$',
+            r"\{\{((?!\}\}).)*$",
             re.MULTILINE | re.DOTALL,
         )
         if unclosed := unclosed_regex.search(input):
             unclosed_pos = position_offset.offset_by_str(
-                input[:unclosed.start()])
+                input[: unclosed.start()]
+            )
             range = SourceRange(unclosed_pos, unclosed_pos + SourcePos(0, 2))
-            raise TransdocSyntaxError(
-                filename,
-                range,
-                "Unclosed rule call. Did you forget a closing '}}'?",
+            errors.append(
+                TransdocSyntaxError(
+                    filename,
+                    range,
+                    "Unclosed rule call. Did you forget a closing '}}'?",
+                )
+            )
+
+        if len(errors):
+            raise ExceptionGroup(
+                "Errors occurred while transforming string", errors
             )
 
         output.seek(0)

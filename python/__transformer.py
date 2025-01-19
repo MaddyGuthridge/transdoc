@@ -17,7 +17,7 @@ from typing import Union, Optional
 import libcst as cst
 from libcst.metadata import CodePosition, PositionProvider, MetadataWrapper
 
-from ..transdoc.__rule import Rule
+from ..transdoc.__rule import TransdocRule
 from ..transdoc.__collect_rules import collect_rules
 from ..transdoc.errors import (
     TransdocTransformationError,
@@ -51,7 +51,7 @@ class DocTransformer(cst.CSTTransformer):
     """
     METADATA_DEPENDENCIES = (PositionProvider,)
 
-    def __init__(self, rules: dict[str, Rule]) -> None:
+    def __init__(self, rules: dict[str, TransdocRule]) -> None:
         """
         Create an instance of the doc transformer module
         """
@@ -280,7 +280,7 @@ class DocTransformer(cst.CSTTransformer):
         return updated_node
 
 
-def make_rules_dict(rules: list[Rule]) -> dict[str, Rule]:
+def make_rules_dict(rules: list[TransdocRule]) -> dict[str, TransdocRule]:
     """
     Convert a list of rule functions into a dictionary of functions
     """
@@ -289,7 +289,7 @@ def make_rules_dict(rules: list[Rule]) -> dict[str, Rule]:
 
 def transform(
     source: Union[str, SourceObjectType],
-    rules: Union[list[Rule], dict[str, Rule], ModuleType],
+    rules: Union[list[TransdocRule], dict[str, TransdocRule], ModuleType],
 ) -> str:
     """
     Transform the Python code by rewriting its documentation according to the

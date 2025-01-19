@@ -15,7 +15,7 @@ from traceback import print_exception, format_exc
 import importlib
 
 from transdoc.__consts import VERSION
-from transdoc.errors import TransdocTransformationError
+from transdoc.errors import TransdocError
 from transdoc.__collect_rules import collect_rules
 
 
@@ -56,7 +56,7 @@ def load_rule_file(rule_file: Path) -> ModuleType:
 
 def report_transformation_error(
     file: Path,
-    errors: TransdocTransformationError
+    errors: TransdocError,
 ):
     print(f"!!! {file}", file=sys.stderr)
     for e in errors.args:
@@ -161,7 +161,7 @@ def main(
         # Transform the data
         try:
             result = transform(in_text, rules)
-        except TransdocTransformationError as e:
+        except TransdocError as e:
             report_transformation_error(mapping.input, e)
             encountered_errors = True
             continue
