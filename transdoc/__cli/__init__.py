@@ -9,6 +9,7 @@ from traceback import print_exc
 import click
 from pathlib import Path
 from typing import IO, Optional
+import logging
 
 from transdoc.__collect_rules import load_rule_file
 from transdoc.__transformer import TransdocTransformer
@@ -17,6 +18,15 @@ from .mutex import Mutex
 from transdoc import transform_tree, transform_file
 
 from transdoc.__consts import VERSION
+
+
+def handle_verbose(verbose: int):
+    if verbose == 0:
+        return
+    elif verbose == 1:
+        logging.basicConfig(level="INFO")
+    else:
+        logging.basicConfig(level="DEBUG")
 
 
 @click.command("transdoc")
@@ -54,6 +64,7 @@ from transdoc.__consts import VERSION
     cls=Mutex,
     mutex_with=["dryrun"],
 )
+@click.option("-v", "--verbose", count=True)
 @click.version_option(VERSION)
 def cli(
     input: str,
@@ -62,12 +73,15 @@ def cli(
     *,
     dryrun: bool = False,
     force: bool = False,
+    verbose: int = 0,
 ) -> int:
     """
     Main entrypoint to the program.
     """
+    handle_verbose(verbose)
     transformer = TransdocTransformer(load_rule_file(rule_file))
     handlers = get_all_handlers()
+
     if input == "-":
         # Transform stdin
         if output is not None:
@@ -86,6 +100,9 @@ def cli(
             print_exc()
             return 1
     else:
+        if output is None and not dryrun:
+            print("--output must be given if --dryrun is not specified")
+            return 2
         try:
             transform_tree(
                 handlers,
