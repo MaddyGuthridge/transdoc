@@ -9,12 +9,11 @@ import os
 from shutil import rmtree
 from pathlib import Path
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Sequence
 
 from transdoc.__transform_file import transform_file
 from transdoc.__transformer import TransdocTransformer
-from transdoc.__collect_rules import load_rule_file
-from transdoc.handlers import get_all_handlers
+from transdoc.handlers.api import TransdocHandler
 
 
 log = logging.getLogger("transdoc.tree_transform")
@@ -55,8 +54,9 @@ def expand_tree(
 
 
 def transform_tree(
+    handlers: Sequence[TransdocHandler],
+    transformer: TransdocTransformer,
     input: Path,
-    rule_file: Path,
     output: Path | None = None,
     *,
     force: bool = False,
@@ -81,18 +81,6 @@ def transform_tree(
                         f"Output location '{output}' already exists"
                     )
                 )
-
-    if rule_file.suffix != ".py":
-        errors.append(
-            RuntimeError(f"Rule file '{rule_file}' must be a Python file")
-        )
-
-    handlers = get_all_handlers()
-
-    try:
-        transformer = TransdocTransformer(load_rule_file(rule_file))
-    except Exception as e:
-        errors.append(e)
 
     if len(errors):
         raise ExceptionGroup(

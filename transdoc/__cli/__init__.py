@@ -67,6 +67,7 @@ def cli(
     Main entrypoint to the program.
     """
     transformer = TransdocTransformer(load_rule_file(rule_file))
+    handlers = get_all_handlers()
     if input == "-":
         # Transform stdin
         if output is not None:
@@ -75,7 +76,7 @@ def cli(
             out_file = sys.stdout
         try:
             transform_file(
-                get_all_handlers(),
+                handlers,
                 transformer,
                 "<stdin>",
                 sys.stdin,
@@ -86,7 +87,13 @@ def cli(
             return 1
     else:
         try:
-            transform_tree(Path(input), rule_file, output, force=force)
+            transform_tree(
+                handlers,
+                transformer,
+                Path(input),
+                output,
+                force=force,
+            )
         except ExceptionGroup:
             print_exc()
             return 1
