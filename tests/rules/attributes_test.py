@@ -3,7 +3,8 @@
 
 Test cases for Transdoc's built-in `attributes` rule.
 """
-from transdoc import transform
+
+from transdoc import TransdocTransformer
 from transdoc.rules import attributes
 
 
@@ -12,26 +13,28 @@ class Example:
     {{attributes("tests.rules.attributes_test", "Example")}}
     """
 
-    def __init__(self) -> None:
-        pass
-
-    def some_fn(self):
-        pass
-
-
-EXPECTED = '''
-class Example:
-    """
-    * some_fn
-    """
+    some_attribute = "value"
 
     def __init__(self) -> None:
         pass
 
     def some_fn(self):
         pass
-'''.removeprefix('\n')
+
+
+EXPECTED = """
+* some_attribute
+* some_fn
+""".strip()
 
 
 def test_attributes():
-    assert transform(Example, [attributes]) == EXPECTED
+    transformer = TransdocTransformer({"attributes": attributes})
+
+    assert (
+        transformer.transform(
+            "{{attributes('tests.rules.attributes_test', 'Example')}}",
+            "<string>",
+        )
+        == EXPECTED
+    )

@@ -3,6 +3,7 @@
 
 A rule generator for generating Markdown links to a documentation site.
 """
+
 from typing import Optional, Callable
 
 
@@ -23,16 +24,14 @@ def markdown_docs_link_generator(
 
     The rule can then be used as follows:
 
-    ```py
-    def some_function():
-        '''See documentation {{docs("some_function", "here")}}.'''
+    ```md
+    See documentation {{docs("some_function", "here")}}.
     ```
 
     Which will produce:
 
-    ```py
-    def some_function():
-        '''See documentation [here](https://example.com/some_function).'''
+    ```md
+    See documentation [here](https://example.com/some_function).
     ```
 
     ## Args

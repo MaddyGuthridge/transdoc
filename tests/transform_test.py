@@ -59,6 +59,14 @@ def test_embeds_rule_output():
     )
 
 
+def test_embeds_multiple_rule_outputs():
+    transformer = make_transformer()
+    assert (
+        transformer.transform("Call: {{simple}} {{simple}}", "<string>")
+        == "Call: Simple rule Simple rule"
+    )
+
+
 def test_multiline_rule():
     transformer = make_transformer()
     assert (
