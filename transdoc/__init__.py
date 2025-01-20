@@ -7,7 +7,8 @@ Python function calls.
 
 __all__ = [
     "__version__",
-    "main",
+    "transform_tree",
+    "transform_file",
     "TransdocHandler",
     "TransdocTransformer",
     "TransdocRule",
@@ -15,6 +16,7 @@ __all__ = [
 
 from .__rule import TransdocRule
 from .__consts import VERSION as __version__
-from .handlers import TransdocHandler
 from .__transformer import TransdocTransformer
-from .__processor import main
+from .handlers import TransdocHandler
+from .__transform_tree import transform_tree
+from .__transform_file import transform_file

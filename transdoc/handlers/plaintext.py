@@ -17,9 +17,14 @@ class PlaintextHandler:
 
     def get_file_matchers(self):
         return [
-            re.compile(r'\.txt$'),
-            re.compile(r'\.md$'),
-            re.compile(r'\.ascii$'),
+            # <stdin> or <string>
+            re.compile(r"^\<(stdin|string)\>$"),
+            # *.txt
+            re.compile(r"\.txt$"),
+            # *.md
+            re.compile(r"\.md$"),
+            # *.ascii
+            re.compile(r"\.ascii$"),
         ]
 
     def transform_file(
@@ -37,6 +42,6 @@ class PlaintextHandler:
             out_file.write(transformed)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Ensure type-safety
     handler: TransdocHandler = PlaintextHandler()
