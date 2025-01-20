@@ -98,7 +98,7 @@ def transform_tree(
                 transformer,
                 str(mapping.input),
                 open(mapping.input),
-                None if mapping.output is None else open(mapping.output),
+                None if mapping.output is None else open(mapping.output, "w"),
             )
         except Exception as e:
             e.add_note(f"Error occurred while transforming {mapping.input}")
