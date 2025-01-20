@@ -21,7 +21,7 @@ def get_all_handlers() -> list[TransdocHandler]:
     handlers: list[TransdocHandler] = [PlaintextHandler()]
     log.info(f"Built-in handlers are: {handlers}")
 
-    discovered = entry_points(group="transdoc.handler")
+    discovered = entry_points(group="transdoc.handlers")
     for discovered_handler in discovered:
         try:
             loaded: type[TransdocHandler] = discovered_handler.load()
