@@ -20,11 +20,11 @@ class PlaintextHandler:
             # <stdin> or <string>
             re.compile(r"^\<(stdin|string)\>$"),
             # *.txt
-            re.compile(r"\.txt$"),
+            "txt",
             # *.md
-            re.compile(r"\.md$"),
+            "md",
             # *.ascii
-            re.compile(r"\.ascii$"),
+            "ascii",
         ]
 
     def transform_file(
