@@ -1,18 +1,18 @@
 """
-# Transdoc / tree transform
+# Transdoc / transform tree
 
 Process an entire directory tree (or a single file) using transdoc.
 """
 
 import logging
 import os
-from shutil import rmtree
+from shutil import copyfile, rmtree
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, Sequence
 
-from transdoc.__transform_file import transform_file
 from transdoc.__transformer import TransdocTransformer
+from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
 
 
@@ -30,7 +30,8 @@ def expand_tree(
     output: Optional[Path],
 ) -> list[FileMapping]:
     """
-    Given a path
+    Given a path, expand it into a list of files that are descendants of that
+    path if the input is a directory.
     """
     file_mappings: list[FileMapping] = []
     if input.is_dir():
@@ -63,46 +64,90 @@ def transform_tree(
 ) -> None:
     """
     Transform all files within a tree.
+
+    This takes all files that are descendants of the input file, and transforms
+    them, writing the results into the corresponding location on the output
+    path.
+
+    Args:
+        handlers (Sequence[TransdocHandler]): handlers to use when transforming
+        files.
+        transformer (TransdocTransformer): transformer rules to use.
+        input (Path): input path to transform
+        output (Path | None, optional): destination path. Defaults to `None`.
+        force (bool, optional): whether to remove the output if it already
+        exists, rather than erroring. Defaults to `False`.
+
+    Raises:
+        FileExistsError: if output exists as a file or non-empty directory, and
+        the `force` option was not set.
+        ExceptionGroup: any exceptions that occurred while transforming the
+        files.
     """
-    errors: list[Exception] = []
     file_mappings = expand_tree(input, output)
 
     if not force:
         if output is not None and output.exists():
-            if output.is_dir() and len(os.listdir(output)):
-                errors.append(
-                    FileExistsError(
+            if output.is_dir():
+                if len(os.listdir(output)):
+                    raise FileExistsError(
                         f"Output directory '{output}' exists and is not empty"
                     )
-                )
-            else:
-                errors.append(
-                    FileExistsError(
-                        f"Output location '{output}' already exists"
+                else:
+                    # Output dir is empty directory, so no error
+                    log.info(
+                        f"Output dir '{output}' exists, but is empty. "
+                        f"Will output to it."
                     )
+            else:
+                raise FileExistsError(
+                    f"Output location '{output}' already exists"
                 )
-
-    if len(errors):
-        raise ExceptionGroup(
-            "Errors occurred while preparing transformation", errors
-        )
 
     # Remove the output file/directory
     if output is not None and output.is_dir() and force:
+        log.info(f"Removing output dir {output}")
         rmtree(output)
 
+    errors: list[Exception] = []
+
+    # Consider using threading to speed this process up
     for mapping in file_mappings:
-        try:
-            transform_file(
-                handlers,
-                transformer,
-                str(mapping.input),
-                open(mapping.input),
-                None if mapping.output is None else open(mapping.output, "w"),
+        # If we intend to output files, we should first create parent dirs
+        if mapping.output is not None:
+            mapping.output.parent.mkdir(parents=True, exist_ok=True)
+
+        handler = find_matching_handler(handlers, str(mapping.input))
+        if handler is None:
+            # No handlers found, just copy file
+            if mapping.output:
+                act = "copying"
+                copyfile(mapping.input, mapping.output)
+            else:
+                act = "skipping"
+            log.info(
+                f"No handlers found that match file {mapping.input}, {act}"
             )
-        except Exception as e:
-            e.add_note(f"Error occurred while transforming {mapping.input}")
-            errors.append(e)
+        else:
+            # Handler found
+            log.info(f"Using handler {handler} to process {mapping.input}")
+            # Now open files
+            in_file = open(mapping.input)
+            out_file = open(mapping.output, "w") if mapping.output else None
+            # And perform the transformation
+            try:
+                handler.transform_file(
+                    transformer,
+                    str(mapping.input),
+                    in_file,
+                    out_file,
+                )
+            except Exception as e:
+                log.exception(f"Error while transforming {mapping.input}")
+                e.add_note(
+                    f"Error occurred while transforming {mapping.input}"
+                )
+                errors.append(e)
 
     if len(errors):
         raise ExceptionGroup(

@@ -10,13 +10,17 @@ from transdoc.source_pos import SourceRange
 
 class TransdocError(Exception):
     """
-    An error that occurred when processing errors.
+    An error that occurred when processing files using Transdoc.
     """
 
     def __init__(self, filename: str, pos: SourceRange, *args: Any) -> None:
         super().__init__(args)
         self.filename = filename
         self.pos = pos
+
+
+class TransdocHandlerError(TransdocError):
+    """Unable to find a `TransdocHandler` that matches the given file"""
 
 
 class TransdocSyntaxError(TransdocError):
