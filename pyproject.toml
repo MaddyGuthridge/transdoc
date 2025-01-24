@@ -50,11 +50,13 @@ line-length = 79
 branch = true
 
 [tool.coverage.report]
-exclude_lines = [
+exclude_also = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
     "return NotImplemented",
     "@overload",
+    'if __name__ == "__main__":',
+    "if __name__ == '__main__':",
 ]
 
 [build-system]
