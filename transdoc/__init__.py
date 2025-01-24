@@ -15,6 +15,7 @@ __all__ = [
 ]
 
 from io import StringIO
+from typing import Optional
 from .__rule import TransdocRule
 from .__consts import VERSION as __version__
 from .__transformer import TransdocTransformer
@@ -27,6 +28,7 @@ def transform(
     transformer: TransdocTransformer,
     input: str,
     path: str = "<string>",
+    handler: Optional[TransdocHandler] = None,
 ) -> str:
     """
     Transform the given input string.
@@ -34,11 +36,15 @@ def transform(
     Args:
         transformer (TransdocTransformer): Transformer with all desired rules
         input (str): input string to transform
-        path (str, optional): name of input string to use when reporting errors
+        path (str, optional): name of input string to use when reporting
+        errors. Defaults to `"<string>"`.
+        handler (TransdocHandler, optional): handler to use for transformation.
+        Defaults to `PlaintextHandler()` when `None` is provided.
     """
-    handlers = [PlaintextHandler()]
+    if handler is None:
+        handler = PlaintextHandler()
     in_buf = StringIO(input)
     out_buf = StringIO()
-    transform_file(handlers, transformer, path, in_buf, out_buf)
+    handler.transform_file(transformer, path, in_buf, out_buf)
     out_buf.seek(0)
     return out_buf.read()
