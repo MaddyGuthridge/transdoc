@@ -1,5 +1,5 @@
 """
-# Tests / Transform test
+# Tests / Transformer test
 
 Test cases for TransdocTransformer
 """
@@ -13,70 +13,38 @@ from transdoc.errors import (
 )
 
 
-def simple_rule():
-    return "Simple rule"
-
-
-def multiline_rule():
-    return "Multiple\nLines"
-
-
-def echo_rule(value):
-    return value
-
-
-def error_rule(exc_type: str = "TypeError"):
-    raise eval(exc_type)
-
-
-def make_transformer():
-    return TransdocTransformer(
-        {
-            "simple": simple_rule,
-            "multiline": multiline_rule,
-            "echo": echo_rule,
-            "error": error_rule,
-        }
-    )
-
-
 ###############################################################################
 
 
-def test_leaves_strings_with_no_rules_as_is():
-    transformer = make_transformer()
+def test_leaves_strings_with_no_rules_as_is(transformer: TransdocTransformer):
     assert (
         transformer.transform("Text without a rule call", "<string>")
         == "Text without a rule call"
     )
 
 
-def test_embeds_rule_output():
-    transformer = make_transformer()
+def test_embeds_rule_output(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{simple}}", "<string>")
         == "Call: Simple rule"
     )
 
 
-def test_embeds_multiple_rule_outputs():
-    transformer = make_transformer()
+def test_embeds_multiple_rule_outputs(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{simple}} {{simple}}", "<string>")
         == "Call: Simple rule Simple rule"
     )
 
 
-def test_multiline_rule():
-    transformer = make_transformer()
+def test_multiline_rule(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{multiline}}", "<string>")
         == "Call: Multiple\nLines"
     )
 
 
-def test_rules_respect_indentation():
-    transformer = make_transformer()
+def test_rules_respect_indentation(transformer: TransdocTransformer):
     assert (
         transformer.transform(
             "Call: {{multiline}}", "<string>", indentation="    "
@@ -85,16 +53,14 @@ def test_rules_respect_indentation():
     )
 
 
-def test_rules_bracket_syntax():
-    transformer = make_transformer()
+def test_rules_bracket_syntax(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{echo[Input text]}}", "<string>")
         == "Call: Input text"
     )
 
 
-def test_rules_python_syntax():
-    transformer = make_transformer()
+def test_rules_python_syntax(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{echo('Input text')}}", "<string>")
         == "Call: Input text"
@@ -104,8 +70,7 @@ def test_rules_python_syntax():
 ###############################################################################
 
 
-def test_errors_unclosed_call():
-    transformer = make_transformer()
+def test_errors_unclosed_call(transformer: TransdocTransformer):
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform("{{Unclosed", "<string>")
     assert excinfo.group_contains(TransdocSyntaxError)
@@ -119,8 +84,7 @@ def test_errors_unclosed_call():
         "{{echo'input'}}",
     ],
 )
-def test_invalid_call_syntax(input: str):
-    transformer = make_transformer()
+def test_invalid_call_syntax(transformer: TransdocTransformer, input: str):
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(input, "<string>")
     assert excinfo.group_contains(TransdocSyntaxError)
@@ -134,8 +98,7 @@ def test_invalid_call_syntax(input: str):
         "{{undefined('input')}}",
     ],
 )
-def test_name_error(input: str):
-    transformer = make_transformer()
+def test_name_error(transformer: TransdocTransformer, input: str):
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(input, "<string>")
     assert excinfo.group_contains(TransdocNameError)
@@ -149,8 +112,9 @@ def test_name_error(input: str):
         ("{{error('ValueError')}}", ValueError),
     ],
 )
-def test_eval_error(input, err_type):
-    transformer = make_transformer()
+def test_eval_error(
+    transformer: TransdocTransformer, input: str, err_type: type[Exception]
+):
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(input, "<string>")
     assert excinfo.group_contains(TransdocEvaluationError)
@@ -158,11 +122,10 @@ def test_eval_error(input, err_type):
     assert isinstance(excinfo.value.exceptions[0].__cause__, err_type)
 
 
-def test_all_errors_reported():
+def test_all_errors_reported(transformer: TransdocTransformer):
     """
     When multiple errors occur when evaluating rules, are they all reported?
     """
-    transformer = make_transformer()
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(
             "{{undefined}} {{error[TypeError]}} {{unclosed", "<string>"
