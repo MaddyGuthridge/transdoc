@@ -3,13 +3,9 @@
 
 API definition for Transdoc handler modules.
 """
-from collections.abc import Sequence
-import re
+
 from typing import Protocol, IO
 from transdoc.__transformer import TransdocTransformer
-
-
-RegexPattern = re.Pattern[str] | str
 
 
 class TransdocHandler(Protocol):
@@ -17,15 +13,16 @@ class TransdocHandler(Protocol):
     A language handler plugin for transdoc.
     """
 
-    def get_file_matchers(self) -> Sequence[RegexPattern]:
+    def matches_file(self, file_path: str) -> bool:
         """
-        Returns the list of file extensions that this handler supports.
+        Given a file path, return whether this handler is capable of
+        transforming the given file.
 
-        This should be a sequence of regular expressions which match the
-        desired files.
+        Args:
+            file_path (str): the file path of the input.
 
         Returns:
-            list[str]: supported file extensions (eg `['txt', 'md'])
+            bool: whether the file can be transformed using this transformer.
         """
         ...
 
@@ -40,7 +37,8 @@ class TransdocHandler(Protocol):
         Transforms the contents of the file at `in_path`, writing the
         transformed output into the file at `out_path`.
 
-        If any errors occur during transformation, no
+        If any errors occur during transformation, they should be collected and
+        raised as an `ExceptionGroup[TransdocError]`.
 
         Args:
             transformer (TransdocTransformer): use `transformer.apply` on

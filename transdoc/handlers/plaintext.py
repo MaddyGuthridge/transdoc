@@ -4,7 +4,7 @@
 A Transdoc handler for plain-text files.
 """
 
-import re
+from pathlib import Path
 from typing import IO
 from transdoc import TransdocTransformer
 from transdoc.handlers import TransdocHandler
@@ -15,17 +15,13 @@ class PlaintextHandler:
     Transdoc handler for plain-text files.
     """
 
-    def get_file_matchers(self):
-        return [
-            # <stdin> or <string>
-            re.compile(r"^\<(stdin|string)\>$"),
-            # *.txt
-            "txt",
-            # *.md
-            "md",
-            # *.ascii
-            "ascii",
-        ]
+    def matches_file(self, file_path: str) -> bool:
+        return (
+            # String inputs
+            file_path in ["<string>", "<stdin>"]
+            # Text-based file formats where other syntax won't cause issues
+            or Path(file_path).suffix in [".txt", ".md", ".ascii"]
+        )
 
     def transform_file(
         self,
