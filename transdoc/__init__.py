@@ -15,6 +15,7 @@ __all__ = [
 ]
 
 from io import StringIO
+import logging
 from typing import Optional
 from .__rule import TransdocRule
 from .__consts import VERSION as __version__
@@ -22,6 +23,9 @@ from .__transformer import TransdocTransformer
 from .handlers import TransdocHandler, PlaintextHandler
 from .__transform_tree import transform_tree
 from .__transform_file import transform_file
+
+
+log = logging.getLogger("transdoc")
 
 
 def transform(
@@ -43,6 +47,12 @@ def transform(
     """
     if handler is None:
         handler = PlaintextHandler()
+
+    if not handler.matches_file(path):
+        log.warning(
+            f"The given handler {handler} does not match the input file path '{path}'"
+        )
+
     in_buf = StringIO(input)
     out_buf = StringIO()
     handler.transform_file(transformer, path, in_buf, out_buf)

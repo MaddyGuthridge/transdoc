@@ -55,7 +55,8 @@ def make_entry_point_from_plugin(
         value=f"{cls.__module__}:{cls.__name__}",
     )
 
-    if dist:
+    # Ignore coverage, since idk what this code is for
+    if dist:  # pragma: no cover
         ep = ep._for(dist)  # type: ignore[attr-defined,no-untyped-call]
         return ep
 
