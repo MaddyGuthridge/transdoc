@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import IO, Optional
 import logging
 
-from transdoc.__collect_rules import load_rule_file
 from transdoc.__transformer import TransdocTransformer
 from transdoc.handlers import get_all_handlers
 from .mutex import Mutex
@@ -79,7 +78,7 @@ def cli(
     Main entrypoint to the program.
     """
     handle_verbose(verbose)
-    transformer = TransdocTransformer(load_rule_file(rule_file))
+    transformer = TransdocTransformer.from_file(rule_file)
     handlers = get_all_handlers()
 
     if input == "-":

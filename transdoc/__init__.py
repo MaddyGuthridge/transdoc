@@ -9,9 +9,10 @@ __all__ = [
     "__version__",
     "transform_tree",
     "transform_file",
-    "TransdocHandler",
     "TransdocTransformer",
     "TransdocRule",
+    "get_all_handlers",
+    "TransdocHandler",
 ]
 
 from io import StringIO
@@ -20,7 +21,7 @@ from typing import Optional
 from .__rule import TransdocRule
 from .__consts import VERSION as __version__
 from .__transformer import TransdocTransformer
-from .handlers import TransdocHandler, PlaintextHandler
+from .handlers import TransdocHandler, PlaintextHandler, get_all_handlers
 from .__transform_tree import transform_tree
 from .__transform_file import transform_file
 
@@ -35,15 +36,24 @@ def transform(
     handler: Optional[TransdocHandler] = None,
 ) -> str:
     """
-    Transform the given input string.
+    Transform the given input string using Transdoc.
 
-    Args:
-        transformer (TransdocTransformer): Transformer with all desired rules
-        input (str): input string to transform
-        path (str, optional): name of input string to use when reporting
-        errors. Defaults to `"<string>"`.
-        handler (TransdocHandler, optional): handler to use for transformation.
-        Defaults to `PlaintextHandler()` when `None` is provided.
+    Parameters
+    ----------
+    transformer : TransdocTransformer
+        Transformer with all desired transformation rules.
+    input : str
+        Input string to transform.
+    path : str, optional = "<string>"
+        Name of input string to use when reporting errors.
+    handler : TransdocHandler, optional
+        Handler to use for transformation. Defaults to `PlaintextHandler()`
+        when not provided.
+
+    Returns
+    -------
+    str
+        Transformed text.
     """
     if handler is None:
         handler = PlaintextHandler()
