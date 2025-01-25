@@ -7,9 +7,11 @@ Test cases for `transdoc.transform_tree`
 from pathlib import Path
 from shutil import rmtree
 from PIL import Image
+import pytest
 
 from transdoc import transform_tree
 from transdoc import TransdocTransformer
+from transdoc.errors import TransdocNameError
 from transdoc.handlers.plaintext import PlaintextHandler
 
 
@@ -70,7 +72,7 @@ def test_overwrites_when_force_used(transformer: TransdocTransformer):
     transform_tree(
         [PlaintextHandler()],
         transformer,
-        Path("tests/data/directory/README.md"),
+        Path("tests/data/directory"),
         temp / "README.md",
     )
     # Forceful should not cause error
@@ -81,3 +83,71 @@ def test_overwrites_when_force_used(transformer: TransdocTransformer):
         temp,
         force=True,
     )
+
+
+def test_fails_when_output_dir_already_exists(
+    transformer: TransdocTransformer,
+):
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    transform_tree(
+        [PlaintextHandler()],
+        transformer,
+        Path("tests/data/directory"),
+        temp,
+    )
+    with pytest.raises(FileExistsError):
+        transform_tree(
+            [PlaintextHandler()],
+            transformer,
+            Path("tests/data/directory"),
+            temp,
+        )
+
+
+def test_fails_when_output_file_already_exists(
+    transformer: TransdocTransformer,
+):
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    transform_tree(
+        [PlaintextHandler()],
+        transformer,
+        Path("tests/data/directory/README.md"),
+        temp / "README.md",
+    )
+    with pytest.raises(FileExistsError):
+        transform_tree(
+            [PlaintextHandler()],
+            transformer,
+            Path("tests/data/directory/README.md"),
+            temp / "README.md",
+        )
+
+
+def test_writes_into_existing_empty_dir(transformer: TransdocTransformer):
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    Path("temp").mkdir()
+    transform_tree(
+        [PlaintextHandler()],
+        transformer,
+        Path("tests/data/directory"),
+        temp,
+    )
+
+
+def test_passes_on_errors_during_transformation(
+    transformer: TransdocTransformer,
+):
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    with pytest.raises(ExceptionGroup) as exc:
+        transform_tree(
+            [PlaintextHandler()],
+            transformer,
+            Path("tests/data/invalid_call.txt"),
+            temp / "invalid_call.txt",
+        )
+
+    assert exc.group_contains(TransdocNameError)
