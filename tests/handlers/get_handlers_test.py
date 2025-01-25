@@ -52,7 +52,7 @@ class ValidHandler(TransdocHandler):
     group = "transdoc.handlers"
 
     def matches_file(self, file_path: str) -> bool:
-        return False
+        raise NotImplementedError()
 
     def transform_file(
         self,
@@ -61,7 +61,7 @@ class ValidHandler(TransdocHandler):
         in_file: IO,
         out_file: IO | None,
     ) -> None:
-        pass
+        raise NotImplementedError()
 
 
 class FailToLoadHandler(TransdocHandler):
