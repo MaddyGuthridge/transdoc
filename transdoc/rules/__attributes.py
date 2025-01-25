@@ -3,6 +3,7 @@
 
 Rule for listing the attributes of the given object.
 """
+
 import importlib
 from typing import Optional, Callable, Any
 
@@ -13,7 +14,7 @@ def attributes_default_filter(attr_name: str, attr_object: Any) -> bool:
 
     Only keeps attrs where the name doesn't start with `_`.
     """
-    return not attr_name.startswith('_')
+    return not attr_name.startswith("_")
 
 
 def attributes_default_formatter(
@@ -27,7 +28,7 @@ def attributes_default_formatter(
     return f"* {attribute}"
 
 
-def attributes(
+def python_object_attributes(
     module: str,
     object: Optional[str] = None,
     *,
@@ -85,10 +86,10 @@ def attributes(
 
 
 # Sneaky little redefinition so we can use it in the function below
-_attributes = attributes
+_attributes = python_object_attributes
 
 
-def attributes_generator(
+def python_object_attributes_generator(
     *,
     filter: Optional[Callable[[str, Any], bool]] = None,
     formatter: Optional[Callable[[str, Optional[str], str], str]] = None,
@@ -134,6 +135,7 @@ def attributes_generator(
     A Transdoc rule function that filters the list of attributes using
     `filter` and formats the list of attributes using `formatter`.
     """
+
     def attributes(module: str, object: Optional[str]) -> str:
         return _attributes(module, object, filter=filter, formatter=formatter)
 

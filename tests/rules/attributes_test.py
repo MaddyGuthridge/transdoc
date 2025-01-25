@@ -4,8 +4,13 @@
 Test cases for Transdoc's built-in `attributes` rule.
 """
 
+from textwrap import dedent
+from typing import Any, Optional
 from transdoc import TransdocTransformer
-from transdoc.rules import attributes
+from transdoc.rules import (
+    python_object_attributes,
+    python_object_attributes_generator,
+)
 
 
 class Example:
@@ -22,14 +27,84 @@ class Example:
         raise NotImplementedError()
 
 
-EXPECTED = """
-* some_attribute
-* some_fn
-""".strip()
+def test_class_attributes():
+    transformer = TransdocTransformer({"attributes": python_object_attributes})
+
+    EXPECTED = dedent(
+        """
+        * some_attribute
+        * some_fn
+        """.lstrip("\n").rstrip(),
+    )
+    assert (
+        transformer.transform(
+            "{{attributes('tests.rules.attributes_test', 'Example')}}",
+            "<string>",
+        )
+        == EXPECTED
+    )
 
 
-def test_attributes():
-    transformer = TransdocTransformer({"attributes": attributes})
+def test_module_attrs():
+    transformer = TransdocTransformer({"attributes": python_object_attributes})
+
+    EXPECTED = dedent(
+        """
+        * hello
+        """.lstrip("\n").rstrip(),
+    )
+    assert (
+        transformer.transform(
+            "{{attributes('tests.data.module')}}",
+            "<string>",
+        )
+        == EXPECTED
+    )
+
+
+def test_custom_filter():
+    def filter_attrs(name: str, ref: Any) -> bool:
+        return name == "__init__"
+
+    transformer = TransdocTransformer(
+        {"attributes": python_object_attributes_generator(filter=filter_attrs)}
+    )
+
+    EXPECTED = dedent(
+        """
+        * __init__
+        """.lstrip("\n").rstrip(),
+    )
+
+    assert (
+        transformer.transform(
+            "{{attributes('tests.rules.attributes_test', 'Example')}}",
+            "<string>",
+        )
+        == EXPECTED
+    )
+
+
+def test_custom_formatter():
+    def format_attrs(
+        module: str, object: Optional[str], attribute: str
+    ) -> str:
+        return f"{module}.{object}.{attribute}"
+
+    transformer = TransdocTransformer(
+        {
+            "attributes": python_object_attributes_generator(
+                formatter=format_attrs
+            )
+        }
+    )
+
+    EXPECTED = dedent(
+        """
+        tests.rules.attributes_test.Example.some_attribute
+        tests.rules.attributes_test.Example.some_fn
+        """.lstrip("\n").rstrip(),
+    )
 
     assert (
         transformer.transform(

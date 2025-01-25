@@ -8,6 +8,7 @@ from io import StringIO
 import re
 
 from transdoc import TransdocRule
+from transdoc.__util import indent_by
 from transdoc.source_pos import SourcePos, SourceRange
 from transdoc.errors import (
     TransdocTransformationError,
@@ -15,15 +16,6 @@ from transdoc.errors import (
     TransdocSyntaxError,
     TransdocNameError,
 )
-
-
-def indent_by(indent: str, string: str) -> str:
-    """
-    Indent the given string using the given indentation.
-    """
-    return "\n".join(
-        [f"{indent}{line.rstrip()}" for line in string.splitlines()]
-    ).lstrip()
 
 
 class TransdocTransformer:
