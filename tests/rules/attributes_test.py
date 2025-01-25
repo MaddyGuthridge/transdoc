@@ -16,10 +16,10 @@ class Example:
     some_attribute = "value"
 
     def __init__(self) -> None:
-        pass
+        raise NotImplementedError()
 
     def some_fn(self):
-        pass
+        raise NotImplementedError()
 
 
 EXPECTED = """
