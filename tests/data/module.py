@@ -1,18 +1,11 @@
 """
-Test module
+Tests / Data / Module
 
-This is to test Transdoc's rewriting of modules.
+Sample Python module.
 
-{{hi}}
+Make sure not to change the attributes of this module or tests will fail.
 """
 
 
-def function():
-    """Here's a docstring {{hi}}"""
-
-
-class Class:
-    """Another docstring {{hi}}"""
-
-    def example(self):
-        """And another one {{hi}}"""
+def hello(name: str):  # pragma: no cover
+    return f"Hello, {name}"

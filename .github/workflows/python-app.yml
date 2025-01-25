@@ -25,9 +25,22 @@ jobs:
     - run: poetry install --all-extras
     - name: Test with pytest
       run: |
-        poetry run pytest
+        poetry run coverage run -m pytest
+    - name: Log code coverage
+      run: |
+        poetry run coverage report
+    - name: Generate code coverage report
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        poetry run coverage xml
+    - name: Create code coverage comment
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: orgoro/coverage@v3
+      with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-  Flake8:
+  Ruff:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -44,9 +57,9 @@ jobs:
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
     - run: poetry --version
     - run: poetry install --all-extras
-    - name: Lint with flake8
+    - name: Lint with ruff
       run: |
-        poetry run flake8
+        poetry run ruff check
 
   Mypy:
     runs-on: ubuntu-latest
@@ -67,4 +80,4 @@ jobs:
     - run: poetry install --all-extras
     - name: Lint with mypy
       run: |
-        poetry run mypy .
+        poetry run mypy

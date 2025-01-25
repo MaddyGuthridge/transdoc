@@ -1,0 +1,4 @@
+This file contains an invalid call that will cause an error when processed by
+Transdoc.
+
+{{undefined}}

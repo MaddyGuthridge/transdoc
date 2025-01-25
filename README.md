@@ -1,7 +1,6 @@
 # 🏳️‍⚧️ Transdoc 🏳️‍⚧️
 
-A simple tool for transforming Python docstrings by embedding results from
-Python function calls.
+Transform your documentation by embedding results from Python function calls.
 
 ## Installation
 
