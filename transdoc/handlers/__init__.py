@@ -6,8 +6,10 @@ Code defining Transdoc handlers.
 
 import logging
 
-from importlib.metadata import entry_points
+from importlib import metadata
 from typing import Sequence
+
+from transdoc.errors import TransdocHandlerLoadError
 from .api import TransdocHandler
 from .plaintext import PlaintextHandler
 
@@ -27,16 +29,21 @@ def get_all_handlers() -> list[TransdocHandler]:
     handlers: list[TransdocHandler] = [PlaintextHandler()]
     log.info(f"Built-in handlers are: {handlers}")
 
-    discovered = entry_points(group="transdoc.handlers")
-    for discovered_handler in discovered:
+    entry_points = metadata.entry_points(group="transdoc.handlers")
+    for discovered in entry_points:
         try:
-            loaded: type[TransdocHandler] = discovered_handler.load()
-            handlers.append(loaded())
-            log.info(f"Loaded handler plugin: {discovered_handler}")
-        except Exception:
-            log.exception(
-                "Error loading discovered handler plugin:", discovered_handler
+            constructor: type[TransdocHandler] = discovered.load()
+            handler = constructor()
+        except Exception as e:
+            raise TransdocHandlerLoadError(
+                f"Error loading discovered handler plugin: {discovered}"
+            ) from e
+        if not isinstance(handler, TransdocHandler):
+            raise TransdocHandlerLoadError(
+                f"Plugin {discovered} doesn't match TransdocHandler protocol"
             )
+        handlers.append(handler)
+        log.info(f"Loaded handler plugin: {discovered}")
 
     return handlers
 

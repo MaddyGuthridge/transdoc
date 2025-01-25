@@ -4,15 +4,18 @@
 API definition for Transdoc handler modules.
 """
 
-from typing import Protocol, IO
+from abc import abstractmethod
+from typing import Protocol, IO, runtime_checkable
 from transdoc.__transformer import TransdocTransformer
 
 
+@runtime_checkable
 class TransdocHandler(Protocol):
     """
     A language handler plugin for transdoc.
     """
 
+    @abstractmethod
     def matches_file(self, file_path: str) -> bool:
         """
         Given a file path, return whether this handler is capable of
@@ -26,6 +29,7 @@ class TransdocHandler(Protocol):
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def transform_file(
         self,
         transformer: TransdocTransformer,

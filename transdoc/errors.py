@@ -3,12 +3,21 @@
 
 Definitions for error classes used by Transdoc.
 """
+
 from typing import Any
 
 from transdoc.source_pos import SourceRange
 
 
 class TransdocError(Exception):
+    """Errors associated with Transdoc"""
+
+
+class TransdocHandlerLoadError(TransdocError):
+    """`TransdocHandler` failed to load"""
+
+
+class TransdocTransformationError(TransdocError):
     """
     An error that occurred when processing files using Transdoc.
     """
@@ -19,17 +28,17 @@ class TransdocError(Exception):
         self.pos = pos
 
 
-class TransdocHandlerError(TransdocError):
+class TransdocNoHandlerError(TransdocTransformationError):
     """Unable to find a `TransdocHandler` that matches the given file"""
 
 
-class TransdocSyntaxError(TransdocError):
+class TransdocSyntaxError(TransdocTransformationError):
     """SyntaxError when transforming documentation"""
 
 
-class TransdocNameError(TransdocError):
+class TransdocNameError(TransdocTransformationError):
     """NameError when attempting to execute rule"""
 
 
-class TransdocEvaluationError(TransdocError):
+class TransdocEvaluationError(TransdocTransformationError):
     """Error occurred when evaluating rule"""

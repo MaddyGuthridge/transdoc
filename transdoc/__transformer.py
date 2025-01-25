@@ -10,7 +10,7 @@ import re
 from transdoc import TransdocRule
 from transdoc.source_pos import SourcePos, SourceRange
 from transdoc.errors import (
-    TransdocError,
+    TransdocTransformationError,
     TransdocEvaluationError,
     TransdocSyntaxError,
     TransdocNameError,
@@ -117,7 +117,7 @@ class TransdocTransformer:
             indentation (str, optional): string to use for indentation (eg
             `' ' * 4` for 4 spaces, or `'\\t'` for one tab).
         """
-        errors: list[TransdocError] = []
+        errors: list[TransdocTransformationError] = []
 
         # Match rule calls
         # \{\{  => opening '{{'
@@ -151,7 +151,7 @@ class TransdocTransformer:
                         indentation,
                     )
                 )
-            except TransdocError as e:
+            except TransdocTransformationError as e:
                 errors.append(e)
 
         # Finally, write remaining string

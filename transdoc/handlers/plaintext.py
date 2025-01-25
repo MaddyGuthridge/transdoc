@@ -10,7 +10,7 @@ from transdoc import TransdocTransformer
 from transdoc.handlers import TransdocHandler
 
 
-class PlaintextHandler:
+class PlaintextHandler(TransdocHandler):
     """
     Transdoc handler for plain-text files.
     """

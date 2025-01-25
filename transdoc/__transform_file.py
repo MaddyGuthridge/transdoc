@@ -8,7 +8,7 @@ import logging
 from typing import IO, Sequence
 
 from transdoc.__transformer import TransdocTransformer
-from transdoc.errors import TransdocHandlerError
+from transdoc.errors import TransdocNoHandlerError
 from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
 from transdoc.source_pos import SourceRange
@@ -44,7 +44,7 @@ def transform_file(
     """
     handler = find_matching_handler(handlers, in_path)
     if handler is None:
-        raise TransdocHandlerError(
+        raise TransdocNoHandlerError(
             in_path,
             SourceRange.zero(),
             f"No handlers found that match file {in_path}!",
