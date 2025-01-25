@@ -1,0 +1,62 @@
+site_name: Transdoc 🏳️‍⚧️
+site_description: Transform your documentation by embedding results from Python function calls.
+repo_name: Transdoc
+repo_url: https://github.com/MaddyGuthridge/Transdoc
+copyright: &copy 2024 <a href="https://github.com/MaddyGuthridge">Maddy Guthridge</a>.
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+  # logo: assets/logo-monochrome.png
+  # favicon: assets/logo.png
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tracking
+    - navigation.instant
+    - navigation.instant.prefetch
+    - content.code.copy
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - transdoc
+          options:
+            show_root_heading: true
+            show_source: false
+            show_bases: false
+            show_root_toc_entry: false
+            docstring_style: "numpy"
+
+markdown_extensions:
+  - toc:
+      title: Contents
+      toc_depth: 2
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+# extra_css:
+#   - stylesheets/extra.css
+
+docs_dir: docs

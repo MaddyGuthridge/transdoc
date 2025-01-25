@@ -21,7 +21,7 @@ plugin_name = 'plugin_module_name:entrypoint'
 
 ## Module contents
 
-The entrypoint object should have a number of methods, such that it matches the
-`TransdocHandler` protocol.
+The `entrypoint` object should have a number of methods, such that it matches
+the `TransdocHandler` protocol.
 
 ::: transdoc.TransdocHandler
