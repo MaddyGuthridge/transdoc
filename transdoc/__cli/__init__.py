@@ -5,18 +5,48 @@ Main entrypoint to the Transdoc CLI.
 """
 
 import sys
+import os
 from traceback import print_exc
 import click
 from pathlib import Path
 from typing import IO, Optional
 import logging
-
-from transdoc.__transformer import TransdocTransformer
-from transdoc.handlers import get_all_handlers
+from transdoc import (
+    transform_tree,
+    transform_file,
+    TransdocTransformer,
+    get_all_handlers,
+)
 from .mutex import Mutex
-from transdoc import transform_tree, transform_file
+from .util import pride
 
 from transdoc.__consts import VERSION
+
+
+help_text_width = os.get_terminal_size().columns - 4
+
+
+HELP_TEXT = f"""
+\b
+{"Transdoc CLI".center(help_text_width)}
+{pride("=" * help_text_width)}
+
+\b
+{"Transform your documentation by embedding results from Python function calls.".center(help_text_width)}
+"""
+
+HELP_EPILOG = f"""
+\b
+{"For more help, view the documentation online:".center(help_text_width)}
+{"https://maddyguthridge.github.io/transdoc".center(help_text_width)}
+
+\b
+{pride("<3 " * (help_text_width // 3), 3)}
+
+\b
+{"Made with <3 by Maddy Guthridge".center(help_text_width)}
+
+"""
 
 
 def handle_verbose(verbose: int):
@@ -28,7 +58,7 @@ def handle_verbose(verbose: int):
         logging.basicConfig(level="DEBUG")
 
 
-@click.command("transdoc")
+@click.command("transdoc", help=HELP_TEXT, epilog=HELP_EPILOG)
 @click.argument(
     "input",
     type=click.Path(exists=True, allow_dash=True),
@@ -74,9 +104,7 @@ def cli(
     force: bool = False,
     verbose: int = 0,
 ) -> int:
-    """
-    Main entrypoint to the program.
-    """
+    """CLI entrypoint"""
     handle_verbose(verbose)
     transformer = TransdocTransformer.from_file(rule_file)
     handlers = get_all_handlers()
