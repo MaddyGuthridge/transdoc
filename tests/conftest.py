@@ -17,7 +17,7 @@ from transdoc import TransdocTransformer
 ###############################################################################
 
 # This code originates from Poetry's code for testing their own plugin system.
-# https://github.com/python-poetry/poetry/blob/main/tests/helpers.py#L253
+# https://github.com/python-poetry/poetry/blob/ecc2697fd79bbc7ef3037ea95c7ed1ef83b8a658/tests/helpers.py#L253
 #
 # Copyright (c) 2018-present Sébastien Eustace
 #
