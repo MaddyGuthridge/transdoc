@@ -1,7 +1,7 @@
 [project]
 name = "transdoc"
 description = "Transform your documentation by embedding results from Python function calls"
-version = "0.2.5"
+version = "1.0.0"
 requires-python = ">= 3.11"
 authors = [{ name = "Maddy Guthridge", email = "hello@maddyguthridge.com" }]
 readme = "README.md"
@@ -51,6 +51,7 @@ mkdocs-awesome-pages-plugin = "^2.10.1"
 [tool.mypy]
 check_untyped_defs = true
 files = ["transdoc", "tests"]
+mypy_path = ["stubs"]
 
 [tool.ruff]
 line-length = 79
