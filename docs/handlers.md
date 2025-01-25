@@ -1,7 +1,8 @@
-# Transdoc handlers
+# Transdoc language handlers
 
 Out-of-the-box, Transdoc can only process text in plain-text files (eg `.txt`,
-`.md`).
+`.md`). To transform documentation in other file-types, handler plugins must be
+installed.
 
 ## Python
 

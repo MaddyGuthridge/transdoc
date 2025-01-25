@@ -28,7 +28,8 @@ theme:
     - content.code.copy
 
 plugins:
-  - search
+  - awesome-pages:
+      collapse_single_pages: true
   - autorefs
   - mkdocstrings:
       handlers:
@@ -42,6 +43,7 @@ plugins:
             show_root_toc_entry: false
             docstring_style: "numpy"
             members_order: "source"
+  - search
 
 markdown_extensions:
   - toc:
@@ -56,8 +58,5 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
-
-# extra_css:
-#   - stylesheets/extra.css
 
 docs_dir: docs
