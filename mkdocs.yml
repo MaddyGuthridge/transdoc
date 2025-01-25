@@ -2,7 +2,7 @@ site_name: Transdoc 🏳️‍⚧️
 site_description: Transform your documentation by embedding results from Python function calls.
 repo_name: Transdoc
 repo_url: https://github.com/MaddyGuthridge/Transdoc
-copyright: &copy 2024 <a href="https://github.com/MaddyGuthridge">Maddy Guthridge</a>.
+copyright: '&copy 2024 <a href="https://github.com/MaddyGuthridge">Maddy Guthridge</a>.'
 
 theme:
   name: material
@@ -41,6 +41,7 @@ plugins:
             show_bases: false
             show_root_toc_entry: false
             docstring_style: "numpy"
+            members_order: "source"
 
 markdown_extensions:
   - toc:

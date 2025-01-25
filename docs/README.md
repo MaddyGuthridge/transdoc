@@ -90,4 +90,4 @@ In HTML, links can be created using the anchor
 ### Transforming documentation in source code
 
 Transdoc can also be used to transform documentation in source, by using a
-handler for your desired language.
+handler for your desired language. For more information, see the page on [handlers](handlers.md).

@@ -58,7 +58,7 @@ def transform_tree(
     handlers: Sequence[TransdocHandler],
     transformer: TransdocTransformer,
     input: Path,
-    output: Path | None = None,
+    output: Path | None,
     *,
     force: bool = False,
 ) -> None:
@@ -69,20 +69,31 @@ def transform_tree(
     them, writing the results into the corresponding location on the output
     path.
 
-    Args:
-        handlers (Sequence[TransdocHandler]): handlers to use when transforming
-        files.
-        transformer (TransdocTransformer): transformer rules to use.
-        input (Path): input path to transform
-        output (Path | None, optional): destination path. Defaults to `None`.
-        force (bool, optional): whether to remove the output if it already
-        exists, rather than erroring. Defaults to `False`.
+    Parameters
+    ----------
+    handlers : Sequence[TransdocHandler]
+        Handlers to consider using when transforming files.
+    transformer : TransdocTransformer
+        Transformer rules to use.
+    input : Path
+        Input path to transform. If a directory is given, all its descendants
+        are transformed. If a regular file's path is given, it is transformed.
+    output : Path | None
+        Destination path. If a directory was given for `input`, a directory
+        will be created at this path, and populated with the transformed
+        contents of the `input` directory. If a regular file was given for
+        `input`, the transformed output is written at that path.
+    force : bool, optional = False
+        Whether to remove the output if it already exists, rather than
+        erroring. Defaults to `False`.
 
-    Raises:
-        FileExistsError: if output exists as a file or non-empty directory, and
-        the `force` option was not set.
-        ExceptionGroup: any exceptions that occurred while transforming the
-        files.
+    Raises
+    ------
+    FileExistsError
+        If output exists as a file or non-empty directory, and the `force`
+        option was not set.
+    ExceptionGroup
+        Any exceptions that occurred while transforming the files.
     """
     file_mappings = expand_tree(input, output)
 

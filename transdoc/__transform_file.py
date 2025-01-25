@@ -28,19 +28,27 @@ def transform_file(
     Given an input file, its path and an output file, transform the file using
     the given handlers.
 
-    If no handlers are able to handle the file, raise a `TransdocHandlerError`.
-    To avoid this, explicitly choose a handler, and use its `transform_file`
-    method.
+    If no handlers are able to handle the file, a `TransdocHandlerError` is
+    raised. To avoid this, explicitly choose a handler, and use its
+    `transform_file` method instead.
 
-    Args:
-        handlers (Sequence[TransdocHandler]): list of handlers to use
-        transformer (TransdocTransformer): transformer to use
-        in_path (str): path of the input file
-        in_file (IO): input file
-        out_file (IO | None): output file, if required
+    Parameters
+    ----------
+    handlers : Sequence[TransdocHandler]
+        List of handlers to consider for transforming the file.
+    transformer : TransdocTransformer
+        Transformer to use.
+    in_path :  str
+        Path of the input file
+    in_file : IO
+        Input file
+    out_file : IO | None
+        Output file, if output is desired.
 
-    Raises:
-        TransdocHandlerError: no handlers that match input file
+    Raises
+    ------
+    TransdocHandlerError
+        No handlers that match input file
     """
     handler = find_matching_handler(handlers, in_path)
     if handler is None:
