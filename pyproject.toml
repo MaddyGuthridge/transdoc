@@ -5,7 +5,7 @@ version = "1.0.0"
 requires-python = ">= 3.11"
 authors = [{ name = "Maddy Guthridge", email = "hello@maddyguthridge.com" }]
 readme = "README.md"
-license = { file = "LICENSE.md" }
+license = { text = "MIT" }
 
 keywords = ["documentation", "source", "transform", "parse", "pre-processor"]
 classifiers = [
@@ -22,8 +22,10 @@ classifiers = [
 dependencies = ["click (>=8.1.7, < 9)", "colored (>=2.2.4,<3.0.0)"]
 
 [project.urls]
+homepage = "https://maddyguthridge.github.io/transdoc"
 repository = "https://github.com/MaddyGuthridge/transdoc"
-# documentation = "https://maddyguthridge.github.io/transdoc/"
+documentation = "https://maddyguthridge.github.io/transdoc"
+"Bug Tracker" = "https://github.com/MaddyGuthridge/transdoc/issues"
 
 [tool.poetry]
 include = ["py.typed"]
