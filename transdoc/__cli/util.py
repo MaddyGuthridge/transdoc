@@ -4,9 +4,26 @@
 Utilities for CLI application.
 """
 
+from collections.abc import Generator, Sequence
 import random
-from itertools import batched
+from typing import TypeVar
 from colored import Fore, Style
+
+
+T = TypeVar("T")
+
+
+# Manually define itertools.batched for Python 3.11 support
+# https://stackoverflow.com/a/8290508/6335363
+def batched(iterable: Sequence[T], n=1) -> Generator[Sequence[T], None, None]:
+    """
+    Batched iterator.
+
+    >>> list(batched([1, 2, 3, 4, 5], 2))
+    [[1, 2], [3, 4], [5]]
+    """
+    for ndx in range(0, len(iterable), n):
+        yield iterable[ndx : min(ndx + n, len(iterable))]
 
 
 # Flag colours from https://www.flagcolorcodes.com
