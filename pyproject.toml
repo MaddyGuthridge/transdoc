@@ -19,7 +19,9 @@ classifiers = [
     "Topic :: Software Development :: Pre-processors",
     "Typing :: Typed",
 ]
-dependencies = ["click (>=8.1.7, < 9)", "colored (>=2.2.4,<3.0.0)"]
+dependencies = ["click (>=8.1.7, <9)", "colored (>=2.2.4,<3.0.0)"]
+[project.optional-dependencies]
+python = ["transdoc-python (>=0.1.0, <1)"]
 
 [project.urls]
 homepage = "https://maddyguthridge.github.io/transdoc"
@@ -49,6 +51,12 @@ mkdocs = "^1.6.1"
 mkdocs-material = "^9.5.50"
 mkdocstrings = { version = "^0.27.0", extras = ["python"] }
 mkdocs-awesome-pages-plugin = "^2.10.1"
+
+
+[tool.poetry.group.python]
+optional = true
+[tool.poetry.group.python.dependencies]
+transdoc-python = "^0.1.0"
 
 [tool.mypy]
 check_untyped_defs = true
