@@ -1,7 +1,6 @@
 # 🏳️‍⚧️ Transdoc 🏳️‍⚧️
 
-A simple transformation system for documentation, where Python functions are
-used to add to documentation.
+Transform your documentation by embedding results from Python function calls.
 
 ## Installation
 
