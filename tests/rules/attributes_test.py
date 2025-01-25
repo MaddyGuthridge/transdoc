@@ -9,7 +9,7 @@ from typing import Any, Optional
 from transdoc import TransdocTransformer
 from transdoc.rules import (
     python_object_attributes,
-    python_object_attributes_generator,
+    python_object_attributes_rule_gen,
 )
 
 
@@ -67,7 +67,7 @@ def test_custom_filter():
         return name == "__init__"
 
     transformer = TransdocTransformer(
-        {"attributes": python_object_attributes_generator(filter=filter_attrs)}
+        {"attributes": python_object_attributes_rule_gen(filter=filter_attrs)}
     )
 
     EXPECTED = dedent(
@@ -93,7 +93,7 @@ def test_custom_formatter():
 
     transformer = TransdocTransformer(
         {
-            "attributes": python_object_attributes_generator(
+            "attributes": python_object_attributes_rule_gen(
                 formatter=format_attrs
             )
         }

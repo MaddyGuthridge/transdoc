@@ -28,76 +28,14 @@ def attributes_default_formatter(
     return f"* {attribute}"
 
 
-def python_object_attributes(
-    module: str,
-    object: Optional[str] = None,
-    *,
-    filter: Optional[Callable[[str, Any], bool]] = None,
-    formatter: Optional[Callable[[str, Optional[str], str], str]] = None,
-) -> str:
-    """
-    Generate a list of attributes for an object.
-
-    This imports the object from the given module before determining its
-    attributes.
-
-    ## Args
-
-    * `module` (`str`): module to import.
-
-    * `object` (`str`, optional): object to list attributes from. If not
-      provided, attributes are listed from `module` instead. Defaults to
-      `None`.
-
-    ## Keyword args
-
-    * `filter` (`(str, Any) -> bool`, optional): a function used to filter out
-      unwanted attributes from the list. It should accept the name of the
-      attribute, as well as a reference to it, then return `True` if the
-      attribute should be included in the list, or `False` if it should be
-      skipped. By default, this skips any attributes whose names start with an
-      underscore (`_`).
-
-    * `formatter` (`(str, Optional[str], str) -> str`, optional): a function to
-      format the documentation for the attribute. It should accept the
-      module name (eg `"transdoc.errors"`), the object name (eg
-      `"TransformErrorInfo"`), and the attribute name (eg `"position"`), and
-      should return text that will be used in place of the object. This can be
-      used to generate Markdown links, or do other useful things. By default,
-      a bullet point followed by the name of the attribute will be provided,
-      for example `"* position"`.
-    """
-    if filter is None:
-        filter = attributes_default_filter
-    if formatter is None:
-        formatter = attributes_default_formatter
-
-    if object is None:
-        data = importlib.import_module(module)
-    else:
-        mod = importlib.import_module(module)
-        data = getattr(mod, object)
-
-    return "\n".join(
-        formatter(module, object, attr)
-        for attr in dir(data)
-        if filter(attr, getattr(data, attr))
-    )
-
-
-# Sneaky little redefinition so we can use it in the function below
-_attributes = python_object_attributes
-
-
-def python_object_attributes_generator(
+def python_object_attributes_rule_gen(
     *,
     filter: Optional[Callable[[str, Any], bool]] = None,
     formatter: Optional[Callable[[str, Optional[str], str], str]] = None,
 ) -> Callable[[str, Optional[str]], str]:
     """
-    Generate an attributes rule that uses the given formatter and/or filter.
-
-    ## Usage
+    Create and return a `python_object_attributes` rule that uses the given
+    formatter and/or filter.
 
     This can be used in a list of rules as follows:
 
@@ -107,36 +45,69 @@ def python_object_attributes_generator(
     def my_custom_formatter(mod, obj, attr):
         return f"{mod}.{obj}.{attr}"
 
-    attributes = attributes_generator(formatter=my_custom_formatter)
+    attributes = python_object_attributes_rule_gen(formatter=my_custom_formatter)
     ```
 
-    ## Keyword args
+    Parameters
+    ----------
+    filter : (str, Any) -> bool, optional
+        a function used to filter out unwanted attributes from the list. It
+        should accept the name of the attribute, as well as a reference to it,
+        then return `True` if the attribute should be included in the list, or
+        `False` if it should be skipped. By default, this skips any attributes
+        whose names start with an underscore (`_`).
 
-    * `filter` (`(str, Any) -> bool`, optional): a function used to filter out
-      unwanted attributes from the list. It should accept the name of the
-      attribute, as well as a reference to it, then return `True` if the
-      attribute should be included in the list, or `False` if it should be
-      skipped. By default, this skips any attributes whose names start with an
-      underscore (`_`).
+    formatter : (str, Optional[str], str) -> str, optional
+        A function to format the documentation for the attribute. It should
+        accept the module name (eg `"org.serious_company"`), the object name (eg
+        `"FizzBuzz"`), and the attribute name (eg `"number_printer_factory"`),
+        and should return text that will be used in place of the object. This
+        can be used to generate Markdown links, or do other useful things. By
+        default, a bullet point followed by the name of the attribute will be
+        provided, for example `"* position"`.
 
-    * `formatter` (`(str, Optional[str], str) -> str`, optional): a function to
-      format the documentation for the attribute. It should accept the
-      module name (eg `"transdoc.errors"`), the object name (eg
-      `"TransformErrorInfo"`), and the attribute name (eg `"position"`), and
-      should return text that will be used in place of the object. This can be
-      used to generate Markdown links, or do other useful things. By default,
-      a bullet point followed by the name of the attribute will be provided,
-      for example `"* position"`.
-
-    ## Returns
-
-    `Callable[[str, Optional[str]], str]`
-
-    A Transdoc rule function that filters the list of attributes using
-    `filter` and formats the list of attributes using `formatter`.
+    Returns
+    -------
+    Callable[[str, Optional[str]], str]
+        A Transdoc rule function that filters the list of attributes using
+        `filter` and formats the list of attributes using `formatter`.
     """
+    if filter is None:
+        filter = attributes_default_filter
+    if formatter is None:
+        formatter = attributes_default_formatter
 
-    def attributes(module: str, object: Optional[str]) -> str:
-        return _attributes(module, object, filter=filter, formatter=formatter)
+    def python_object_attributes(
+        module: str,
+        object: Optional[str] = None,
+    ) -> str:
+        if object is None:
+            data = importlib.import_module(module)
+        else:
+            mod = importlib.import_module(module)
+            data = getattr(mod, object)
 
-    return attributes
+        return "\n".join(
+            formatter(module, object, attr)
+            for attr in dir(data)
+            if filter(attr, getattr(data, attr))
+        )
+
+    return python_object_attributes
+
+
+python_object_attributes = python_object_attributes_rule_gen()
+"""
+Generate a list of attributes for an object.
+
+This imports the object from the given module before determining its
+attributes.
+
+Parameters
+----------
+module : str
+    Module name to import object from.
+object : str, optional
+    Object to list attributes from. If not provided, attributes are listed
+    from `module` instead. Defaults to `None`.
+"""

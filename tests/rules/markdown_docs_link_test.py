@@ -5,12 +5,12 @@ Test cases for Transdoc rule for generating markdown documentation links.
 """
 
 from transdoc.__transformer import TransdocTransformer
-from transdoc.rules.__markdown_docs_link import markdown_docs_link_generator
+from transdoc.rules.__markdown_docs_link import markdown_docs_link_rule_gen
 
 
 def test_creates_links():
     transformer = TransdocTransformer(
-        {"docs": markdown_docs_link_generator("https://example.com")}
+        {"docs": markdown_docs_link_rule_gen("https://example.com")}
     )
 
     assert (
@@ -21,7 +21,7 @@ def test_creates_links():
 
 def test_creates_links_with_default_text():
     transformer = TransdocTransformer(
-        {"docs": markdown_docs_link_generator("https://example.com")}
+        {"docs": markdown_docs_link_rule_gen("https://example.com")}
     )
 
     assert (
@@ -32,7 +32,7 @@ def test_creates_links_with_default_text():
 
 def test_handles_trailing_slash():
     transformer = TransdocTransformer(
-        {"docs": markdown_docs_link_generator("https://example.com/")}
+        {"docs": markdown_docs_link_rule_gen("https://example.com/")}
     )
 
     assert (

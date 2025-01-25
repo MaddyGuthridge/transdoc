@@ -7,19 +7,18 @@ A rule generator for generating Markdown links to a documentation site.
 from typing import Optional, Callable
 
 
-def markdown_docs_link_generator(
+def markdown_docs_link_rule_gen(
     base_url: str,
 ) -> Callable[[str, Optional[str]], str]:
     """
     Creates a rule for generating Markdown-style links to a site given a base
     URL.
 
-    ## Usage
+    The rule can be generated using a base URL.
 
     ```py
     from transdoc.rules import docs_link_from_site
-    docs = docs_link_from_site(
-        "https://example.com/")
+    docs = docs_link_from_site("https://example.com/")
     ```
 
     The rule can then be used as follows:
@@ -34,16 +33,16 @@ def markdown_docs_link_generator(
     See documentation [here](https://example.com/some_function).
     ```
 
-    ## Args
+    Parameters
+    ----------
+    base_url : str
+        Base URL to use for documentation site.
 
-    * `base_url` (`str`): base URL to use for documentation site.
-
-    ## Returns
-
+    Returns
+    -------
     `(str, Optional[str]) -> str`
-
-    A rule function that accepts a URL fragment and produces a
-    Markdown-formatted link.
+        A rule function that accepts a URL fragment and produces a
+        Markdown-formatted link.
     """
     base_url = base_url.removesuffix("/")
 

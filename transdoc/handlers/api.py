@@ -21,11 +21,15 @@ class TransdocHandler(Protocol):
         Given a file path, return whether this handler is capable of
         transforming the given file.
 
-        Args:
-            file_path (str): the file path of the input.
+        Parameters
+        ----------
+        file_path : str
+            The file path of the input.
 
-        Returns:
-            bool: whether the file can be transformed using this transformer.
+        Returns
+        -------
+        bool
+            Whether the file can be transformed using this transformer.
         """
         raise NotImplementedError()
 
@@ -44,16 +48,22 @@ class TransdocHandler(Protocol):
         If any errors occur during transformation, they should be collected and
         raised as an `ExceptionGroup[TransdocError]`.
 
-        Args:
-            transformer (TransdocTransformer): use `transformer.apply` on
-            any strings where rules should be applied.
-            in_path (str): path to input file, to be used in error reporting.
-            in_file (IO): file to read input from.
-            out_file (IO | None): the file to write the output to, or `None` if
-            no output should be produced.
+        Parameters
+        ----------
+        transformer : TransdocTransformer
+            Use `transformer.apply` on any strings where rules should be
+            applied.
+        in_path : str
+            Path to input file, to be used in error reporting.
+        in_file : IO
+            File to read input from.
+        out_file : IO | None
+            The file to write the output to, or `None` if no output should be
+            produced.
 
-        Raises:
-            ExceptionGroup[TransdocError]: errors encountered during
-            transformation.
+        Raises
+        ------
+        ExceptionGroup[TransdocError]
+            errors encountered during transformation.
         """
         raise NotImplementedError()

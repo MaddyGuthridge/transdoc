@@ -23,8 +23,10 @@ def get_all_handlers() -> list[TransdocHandler]:
 
     This includes Transdoc built-in handlers, as well as any detected plugins.
 
-    Returns:
-        list[TransdocHandler]: found handlers
+    Returns
+    -------
+    list[TransdocHandler]
+        Handlers found through package metadata, and default handlers.
     """
     handlers: list[TransdocHandler] = [PlaintextHandler()]
     log.info(f"Built-in handlers are: {handlers}")
@@ -58,12 +60,17 @@ def find_matching_handler(
 
     If no match can be found, returns `None`.
 
-    Args:
-        handlers (Sequence[TransdocHandler]): list of handler plugins to check
-        file_path (str): file path to check against
+    Parameters
+    ----------
+    handlers : Sequence[TransdocHandler]
+        List of handler plugins to check.
+    file_path : str
+        File path to check against.
 
-    Returns:
-        TransdocHandler | None: matching handler or `None`
+    Returns
+    -------
+    TransdocHandler | None
+        Matching handler or `None` if no match found.
     """
     # https://stackoverflow.com/a/8534381/6335363
     return next(
