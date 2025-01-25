@@ -1,0 +1,3 @@
+An example license file
+
+{{file_contents[LICENSE.md]}}

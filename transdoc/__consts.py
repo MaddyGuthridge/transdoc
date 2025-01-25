@@ -3,4 +3,7 @@
 
 Constants used by Transdoc
 """
-VERSION = "0.2.5"
+
+from importlib.metadata import version
+
+VERSION = version("transdoc")

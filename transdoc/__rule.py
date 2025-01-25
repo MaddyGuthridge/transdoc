@@ -6,8 +6,8 @@ Type definition for Transdoc rules
 from typing import Callable
 
 
-Rule = Callable[..., str]
+TransdocRule = Callable[..., str]
 """
 Rules are Python functions (potentially accepting arguments) which can be
-called during compile time.
+called within Transdoc input files.
 """
