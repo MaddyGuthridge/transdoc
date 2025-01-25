@@ -45,9 +45,10 @@ def markdown_docs_link_generator(
     A rule function that accepts a URL fragment and produces a
     Markdown-formatted link.
     """
+    base_url = base_url.removesuffix("/")
 
     def markdown_docs_link(path: str, text: Optional[str] = None) -> str:
-        full_url = f"{base_url}{path}"
+        full_url = f"{base_url}/{path}"
         if text is None:
             return f"[{full_url}]({full_url})"
         else:
