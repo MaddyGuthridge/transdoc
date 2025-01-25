@@ -55,6 +55,7 @@ exclude_also = [
     "pragma: no cover",
     "if TYPE_CHECKING:",
     "return NotImplemented",
+    "raise NotImplementedError",
     "@overload",
     'if __name__ == "__main__":',
     "if __name__ == '__main__':",

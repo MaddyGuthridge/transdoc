@@ -24,7 +24,7 @@ class TransdocHandler(Protocol):
         Returns:
             bool: whether the file can be transformed using this transformer.
         """
-        ...
+        raise NotImplementedError()
 
     def transform_file(
         self,
@@ -52,4 +52,4 @@ class TransdocHandler(Protocol):
             ExceptionGroup[TransdocError]: errors encountered during
             transformation.
         """
-        ...
+        raise NotImplementedError()
