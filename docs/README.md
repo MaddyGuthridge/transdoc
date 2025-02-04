@@ -1,4 +1,4 @@
-# 🏳️‍⚧️ Transdoc 🏳️‍⚧️
+# ![Transdoc](./assets/transdoc.png)
 
 Transform your documentation by embedding results from Python function calls.
 

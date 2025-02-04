@@ -17,8 +17,8 @@ theme:
       toggle:
         icon: material/lightbulb
         name: Switch to dark mode
-  # logo: assets/logo-monochrome.png
-  # favicon: assets/logo.png
+  logo: "assets/logo.png"
+  favicon: "assets/logo.png"
   icon:
     repo: fontawesome/brands/github
   features:
