@@ -39,6 +39,9 @@ class TransdocTransformer:
         """
         self.__rules = rules
 
+    def __repr__(self) -> str:
+        return f"TransdocTransformer({self.__rules})"
+
     @classmethod
     def from_file(cls, rule_file: Path) -> "TransdocTransformer":
         """

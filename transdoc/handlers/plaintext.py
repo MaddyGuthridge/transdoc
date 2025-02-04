@@ -15,6 +15,9 @@ class PlaintextHandler(TransdocHandler):
     Transdoc handler for plain-text files.
     """
 
+    def __repr__(self) -> str:
+        return "PlaintextHandler"
+
     def matches_file(self, file_path: str) -> bool:
         return (
             # String inputs
