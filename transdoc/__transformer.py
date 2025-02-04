@@ -12,7 +12,7 @@ import re
 from typing import Any
 
 from transdoc import TransdocRule
-from transdoc.__util import indent_by
+from transdoc.util import indent_by
 from transdoc.source_pos import SourcePos, SourceRange
 from transdoc.errors import (
     TransdocTransformationError,

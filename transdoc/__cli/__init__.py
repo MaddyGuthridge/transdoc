@@ -12,14 +12,13 @@ from pathlib import Path
 from typing import IO, Optional
 import logging
 
-from colorama import Fore
 from transdoc import (
     transform_tree,
     transform_file,
     TransdocTransformer,
     get_all_handlers,
 )
-from transdoc.errors import TransdocTransformationError
+from transdoc.util import print_error
 from .mutex import Mutex
 from .util import pride
 
@@ -53,52 +52,6 @@ HELP_EPILOG = f"""
 {"Made with <3 by Maddy Guthridge".center(help_text_width)}
 
 """
-
-
-def error_args(args: tuple) -> str:
-    msg = []
-    for arg in args:
-        if isinstance(arg, tuple):
-            msg.append(error_args(arg))
-        else:
-            msg.append(str(arg))
-    return " ".join(msg)
-
-
-def display_transdoc_error(e: TransdocTransformationError):
-    print(
-        f"{Fore.CYAN}{e.filename}:{e.pos.start}{Fore.RESET} "
-        f"{Fore.RED}{type(e).__name__}{Fore.RESET}: "
-        f"{error_args(e.args)}",
-        file=sys.stderr,
-    )
-
-
-def display_syntax_error(e: SyntaxError):
-    print(
-        f"{Fore.CYAN}{e.filename}:{e.lineno}:{e.offset}{Fore.RESET} "
-        f"{Fore.RED}{type(e).__name__}{Fore.RESET}: "
-        f"{e.msg}",
-        file=sys.stderr,
-    )
-
-
-def show_error(e: Exception):
-    """
-    Display errors
-    """
-    if isinstance(e, ExceptionGroup):
-        for sub_error in e.exceptions:
-            show_error(sub_error)
-    elif isinstance(e, SyntaxError):
-        display_syntax_error(e)
-    elif isinstance(e, TransdocTransformationError):
-        display_transdoc_error(e)
-    else:
-        print(
-            f"{Fore.RED}{type(e).__name__}{Fore.RESET}: {error_args(e.args)}",
-            file=sys.stderr,
-        )
 
 
 def handle_verbose(verbose: int):
@@ -165,7 +118,7 @@ def cli(
         msg = f"Error evaluating rule file '{rule_file}'"
         log.exception(msg)
         print(msg, file=sys.stderr)
-        show_error(e)
+        print_error(e)
         return 1
     handlers = get_all_handlers()
 
@@ -184,7 +137,7 @@ def cli(
                 out_file,
             )
         except ExceptionGroup as e:
-            show_error(e)
+            print_error(e)
             return 1
     else:
         if output is None and not dryrun:
@@ -199,6 +152,6 @@ def cli(
                 force=force,
             )
         except ExceptionGroup as e:
-            show_error(e)
+            print_error(e)
             return 1
     return 0

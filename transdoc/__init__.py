@@ -13,6 +13,7 @@ __all__ = [
     "TransdocRule",
     "get_all_handlers",
     "TransdocHandler",
+    "util",
 ]
 
 from io import StringIO
@@ -24,6 +25,7 @@ from .__transformer import TransdocTransformer
 from .handlers import TransdocHandler, PlaintextHandler, get_all_handlers
 from .__transform_tree import transform_tree
 from .__transform_file import transform_file
+from . import util
 
 
 log = logging.getLogger("transdoc")
