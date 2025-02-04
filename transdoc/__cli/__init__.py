@@ -4,9 +4,9 @@
 Main entrypoint to the Transdoc CLI.
 """
 
+import logging.config
 import sys
 import os
-from traceback import print_exc
 import click
 from pathlib import Path
 from typing import IO, Optional
@@ -24,6 +24,9 @@ from .mutex import Mutex
 from .util import pride
 
 from transdoc.__consts import VERSION
+
+
+log = logging.getLogger(__name__)
 
 
 help_text_width = os.get_terminal_size().columns - 4
@@ -65,35 +68,47 @@ def error_args(args: tuple) -> str:
 def display_transdoc_error(e: TransdocTransformationError):
     print(
         f"{Fore.CYAN}{e.filename}:{e.pos.start}{Fore.RESET} "
-        f"{Fore.RED}{type(e).__name__}{Fore.RESET} "
+        f"{Fore.RED}{type(e).__name__}{Fore.RESET}: "
         f"{error_args(e.args)}",
         file=sys.stderr,
     )
 
 
-def show_errors(exc_group: ExceptionGroup):
+def display_syntax_error(e: SyntaxError):
+    print(
+        f"{Fore.CYAN}{e.filename}:{e.lineno}:{e.offset}{Fore.RESET} "
+        f"{Fore.RED}{type(e).__name__}{Fore.RESET}: "
+        f"{e.msg}",
+        file=sys.stderr,
+    )
+
+
+def show_error(e: Exception):
     """
     Display errors
     """
-    for e in exc_group.exceptions:
-        if isinstance(e, ExceptionGroup):
-            show_errors(e)
-        elif isinstance(e, TransdocTransformationError):
-            display_transdoc_error(e)
-        else:
-            print(
-                f"{Fore.RED}{type(e).__name__}{Fore.RESET} {error_args(e.args)}",
-                file=sys.stderr,
-            )
+    if isinstance(e, ExceptionGroup):
+        for sub_error in e.exceptions:
+            show_error(sub_error)
+    elif isinstance(e, SyntaxError):
+        display_syntax_error(e)
+    elif isinstance(e, TransdocTransformationError):
+        display_transdoc_error(e)
+    else:
+        print(
+            f"{Fore.RED}{type(e).__name__}{Fore.RESET}: {error_args(e.args)}",
+            file=sys.stderr,
+        )
 
 
 def handle_verbose(verbose: int):
-    if verbose == 0:
-        return
-    elif verbose == 1:
-        logging.basicConfig(level="INFO")
-    else:
-        logging.basicConfig(level="DEBUG")
+    mappings = {
+        0: "CRITICAL",
+        1: "WARNING",
+        2: "INFO",
+        3: "DEBUG",
+    }
+    logging.basicConfig(level=mappings.get(verbose, "DEBUG"))
 
 
 @click.command("transdoc", help=HELP_TEXT, epilog=HELP_EPILOG)
@@ -144,7 +159,14 @@ def cli(
 ) -> int:
     """CLI entrypoint"""
     handle_verbose(verbose)
-    transformer = TransdocTransformer.from_file(rule_file)
+    try:
+        transformer = TransdocTransformer.from_file(rule_file)
+    except Exception as e:
+        msg = f"Error evaluating rule file '{rule_file}'"
+        log.exception(msg)
+        print(msg, file=sys.stderr)
+        show_error(e)
+        return 1
     handlers = get_all_handlers()
 
     if input == "-":
@@ -161,8 +183,8 @@ def cli(
                 sys.stdin,
                 out_file,
             )
-        except ExceptionGroup:
-            print_exc()
+        except ExceptionGroup as e:
+            show_error(e)
             return 1
     else:
         if output is None and not dryrun:
@@ -177,6 +199,6 @@ def cli(
                 force=force,
             )
         except ExceptionGroup as e:
-            show_errors(e)
+            show_error(e)
             return 1
     return 0

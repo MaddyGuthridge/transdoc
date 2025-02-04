@@ -154,9 +154,9 @@ def transform_tree(
                     out_file,
                 )
             except Exception as e:
-                e.add_note(
-                    f"Error occurred while transforming {mapping.input}"
-                )
+                msg = f"Error occurred while transforming {mapping.input}"
+                log.exception(msg)
+                e.add_note(msg)
                 errors.append(e)
 
     if len(errors):
