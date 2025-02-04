@@ -230,8 +230,8 @@ class TransdocTransformer:
         for match in rule_call_regex.finditer(input):
             # Rule call, excluding leading '{{' and trailing '}}'
             rule_call = match.group(0)[2:-2]
-            start = position_offset.offset_by_str(indentation[: match.start()])
-            end = position_offset.offset_by_str(indentation[: match.end()])
+            start = position_offset.offset_by_str(input[: match.start()])
+            end = position_offset.offset_by_str(input[: match.end()])
 
             # Add non-matched input to output
             output.write(input[input_pos : match.start()])
