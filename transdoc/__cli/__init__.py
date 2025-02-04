@@ -11,12 +11,15 @@ import click
 from pathlib import Path
 from typing import IO, Optional
 import logging
+
+from colorama import Fore
 from transdoc import (
     transform_tree,
     transform_file,
     TransdocTransformer,
     get_all_handlers,
 )
+from transdoc.errors import TransdocTransformationError
 from .mutex import Mutex
 from .util import pride
 
@@ -47,6 +50,41 @@ HELP_EPILOG = f"""
 {"Made with <3 by Maddy Guthridge".center(help_text_width)}
 
 """
+
+
+def error_args(args: tuple) -> str:
+    msg = []
+    for arg in args:
+        if isinstance(arg, tuple):
+            msg.append(error_args(arg))
+        else:
+            msg.append(str(arg))
+    return " ".join(msg)
+
+
+def display_transdoc_error(e: TransdocTransformationError):
+    print(
+        f"{Fore.CYAN}{e.filename}:{e.pos.start}{Fore.RESET} "
+        f"{Fore.RED}{type(e).__name__}{Fore.RESET} "
+        f"{error_args(e.args)}",
+        file=sys.stderr,
+    )
+
+
+def show_errors(exc_group: ExceptionGroup):
+    """
+    Display errors
+    """
+    for e in exc_group.exceptions:
+        if isinstance(e, ExceptionGroup):
+            show_errors(e)
+        elif isinstance(e, TransdocTransformationError):
+            display_transdoc_error(e)
+        else:
+            print(
+                f"{Fore.RED}{type(e).__name__}{Fore.RESET} {error_args(e.args)}",
+                file=sys.stderr,
+            )
 
 
 def handle_verbose(verbose: int):
@@ -138,7 +176,7 @@ def cli(
                 output,
                 force=force,
             )
-        except ExceptionGroup:
-            print_exc()
+        except ExceptionGroup as e:
+            show_errors(e)
             return 1
     return 0
