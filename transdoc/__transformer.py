@@ -65,6 +65,10 @@ class TransdocTransformer:
             f"transdoc.rules_temp.{rule_file.name.removesuffix('.py')}"
         )
 
+        # Add rule file's directory to the module search path, so that imports
+        # work as-expected
+        sys.path.append(str(rule_file.parent.absolute()))
+        # Now begin the import
         spec = importlib.util.spec_from_file_location(module_name, rule_file)
         if spec is None:
             raise ImportError(
