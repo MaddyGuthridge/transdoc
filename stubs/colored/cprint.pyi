@@ -1,3 +1,0 @@
-from .colored import Colored as Colored
-
-def cprint(text: str, fore_256: int | str = None, back_256: int | str = None, fore_rgb: tuple = None, back_rgb: tuple = None, formatting: int | str = '', line_color: int | str = '', reset: bool = True, **kwargs) -> None: ...

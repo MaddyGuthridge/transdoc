@@ -61,7 +61,6 @@ transdoc-python = "^0.1.0"
 [tool.mypy]
 check_untyped_defs = true
 files = ["transdoc", "tests"]
-mypy_path = ["stubs"]
 
 [tool.ruff]
 line-length = 79
