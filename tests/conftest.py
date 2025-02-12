@@ -116,8 +116,8 @@ def simple_rule():
     return "Simple rule"
 
 
-def multiline_rule():
-    return "Multiple\nLines"
+def multiline_rule(text=""):
+    return f"Multiple\nLines {text}".strip()
 
 
 def echo_rule(value):

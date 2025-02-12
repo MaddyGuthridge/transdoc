@@ -268,7 +268,7 @@ class TransdocTransformer:
         # $             => end of string
         unclosed_regex = re.compile(
             r"\{\{((?!\}\}).)*$",
-            re.MULTILINE | re.DOTALL,
+            re.DOTALL,
         )
         if unclosed := unclosed_regex.search(input):
             unclosed_pos = position_offset.offset_by_str(

@@ -37,10 +37,17 @@ def test_embeds_multiple_rule_outputs(transformer: TransdocTransformer):
     )
 
 
-def test_multiline_rule(transformer: TransdocTransformer):
+def test_multiline_output_rule(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{multiline}}", "<string>")
         == "Call: Multiple\nLines"
+    )
+
+
+def test_multiline_input_rule(transformer: TransdocTransformer):
+    assert (
+        transformer.transform("Call: {{multiline[sample\ntext]}}", "<string>")
+        == "Call: Multiple\nLines sample\ntext"
     )
 
 
