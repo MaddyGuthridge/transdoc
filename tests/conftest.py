@@ -103,6 +103,7 @@ def transformer():
             "simple": simple_rule,
             "multiline": multiline_rule,
             "echo": echo_rule,
+            "reprs": reprs_rule,
             "error": error_rule,
             "file_contents": file_contents,
         }
@@ -118,6 +119,10 @@ def simple_rule():
 
 def multiline_rule(text=""):
     return f"Multiple\nLines {text}".strip()
+
+
+def reprs_rule(*data: Any) -> str:
+    return "\n".join(repr(item) for item in data)
 
 
 def echo_rule(value):

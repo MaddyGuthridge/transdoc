@@ -44,10 +44,17 @@ def test_multiline_output_rule(transformer: TransdocTransformer):
     )
 
 
-def test_multiline_input_rule(transformer: TransdocTransformer):
+def test_multiline_bracket_input_rule(transformer: TransdocTransformer):
     assert (
         transformer.transform("Call: {{multiline[sample\ntext]}}", "<string>")
         == "Call: Multiple\nLines sample\ntext"
+    )
+
+
+def test_multiline_python_fn_input_rule(transformer: TransdocTransformer):
+    assert (
+        transformer.transform("Call: {{reprs('sample',\n'text')}}", "<string>")
+        == "Call: 'sample'\n'text'"
     )
 
 
