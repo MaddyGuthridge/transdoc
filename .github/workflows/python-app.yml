@@ -6,7 +6,7 @@ name: Test and Lint
 on: [push]
 
 jobs:
-  Pytest:
+  Test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  Ruff:
+  Lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
       run: |
         poetry run ruff check
 
-  Mypy:
+  Type-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
