@@ -1280,14 +1280,14 @@ files = [
 
 [[package]]
 name = "transdoc-python"
-version = "0.1.0"
+version = "0.1.4"
 description = "A Transdoc handler for Python docstrings"
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "python"]
 files = [
-    {file = "transdoc_python-0.1.0-py3-none-any.whl", hash = "sha256:3b4a0fcea4acb085d68e81e1600b4a4d9b7eeef447da5c34d5aebe5e4ce33e28"},
-    {file = "transdoc_python-0.1.0.tar.gz", hash = "sha256:b3e59c0f33c994182d5f26fa1af61769862cc76ea33a018879cefb133507dc72"},
+    {file = "transdoc_python-0.1.4-py3-none-any.whl", hash = "sha256:b2ca4f89f37a1b7e7f967c3de803003228f24e0a636b83d6a6977f6c245e865e"},
+    {file = "transdoc_python-0.1.4.tar.gz", hash = "sha256:b57710eb445e81a2484afc39bf7ab639ebe36bed37b19f551434e4354ca20590"},
 ]
 
 [package.dependencies]
@@ -1388,4 +1388,4 @@ python = ["transdoc-python"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">= 3.11"
-content-hash = "fdabd2f7cafbd98b74cf12dfe4f071f26894e1bdba094f9fed3a7fe36e9cb561"
+content-hash = "40a9da1d9623ef027170b9857d66fb93bcdc0d08c4bd7c76d5f8718b2e3940e0"
