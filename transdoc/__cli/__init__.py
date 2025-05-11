@@ -75,13 +75,13 @@ def handle_verbose(verbose: int):
     "--rule-file",
     type=click.Path(exists=True, path_type=Path),
     required=True,
-    help="Path to any Python file/module containing rules for Transdoc to use",
+    help="Path to any Python file/module containing rules for Transdoc to use.",
 )
 @click.option(
     "-o",
     "--output",
     type=click.Path(exists=False, path_type=Path),
-    help="Path to the output file or directory",
+    help="Path to the output file or directory.",
     cls=Mutex,
     mutex_with=["dryrun"],
 )
@@ -89,13 +89,13 @@ def handle_verbose(verbose: int):
     "-d",
     "--dryrun",
     is_flag=True,
-    help="Don't produce any output files",
+    help="Don't produce any output files.",
 )
 @click.option(
     "-f",
     "--force",
     is_flag=True,
-    help="Forcefully overwrite the output file/directory",
+    help="Forcefully overwrite the output file/directory.",
     cls=Mutex,
     mutex_with=["dryrun"],
 )

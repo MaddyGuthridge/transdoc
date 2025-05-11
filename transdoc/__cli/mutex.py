@@ -19,7 +19,7 @@ class Mutex(click.Option):
         assert self.mutex_with, "'mutex_with' parameter required"
         kwargs["help"] = (
             kwargs.get("help", "")
-            + "Option is mutually exclusive with "
+            + " Option is mutually exclusive with "
             + ", ".join(self.mutex_with) + "."
         ).strip()
         super(Mutex, self).__init__(*args, **kwargs)
