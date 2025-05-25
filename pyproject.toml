@@ -65,6 +65,44 @@ files = ["transdoc", "tests"]
 [tool.ruff]
 line-length = 79
 
+[tool.ruff.lint]
+select = [
+    # Common bugs
+    "E", # PyCodeStyle errors
+    "W", # PyCodeStyle warning
+    "F", # Pyflakes
+    "B", # Bugbear
+    # "S", # Bandit (security mistakes)
+
+    # Syntax
+    "C4", # Comprehension expressions
+    "COM", # Trailing commas
+    "UP", # Upgrade due to newer Python version
+    "TRY", # Exception-handling
+
+    # CodeCommon code simplifications
+    "SIM",
+
+    # Imports
+    "I",   # isort
+    "ICN", # Import conventions
+    "TID", # More good import practices
+
+    # Naming conventions
+    "N",
+
+    # Comments and documentation
+    "TD", # Be diligent with TODO comments
+    "D", # Enforce documentation style
+]
+
+ignore = [
+    # Docstring writing style
+    # I actually agree with most of these for functions, but they are also
+    # applied to module and class docstrings, which is pretty annoying.
+    "D4",
+]
+
 [tool.coverage.run]
 branch = true
 
