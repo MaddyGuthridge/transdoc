@@ -130,7 +130,7 @@ def transform_tree(
         log.info(f"Removing output dir {output}")
         rmtree(output)
 
-    errors: list[Exception] = []
+    errors: list[TransdocTransformationError] = []
 
     # Consider using threading to speed this process up
     for mapping in file_mappings:

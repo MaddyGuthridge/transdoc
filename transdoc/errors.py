@@ -6,7 +6,7 @@ Definitions for error classes used by Transdoc.
 from collections.abc import Sequence
 from importlib.metadata import EntryPoint
 from pathlib import Path
-from typing import Any
+from typing import Any, override
 
 from transdoc.source_pos import SourceRange
 
@@ -86,12 +86,17 @@ class TransdocEvaluationError(TransdocTransformationError):
 class TransdocTransformExceptionGroup(ExceptionGroup):
     """Exception group of errors when performing a transformation"""
 
-    def __init__(
-        self,
-        exceptions: Sequence[TransdocTransformationError],
-    ) -> None:
+    def __new__(
+        cls,
+        excs: Sequence[TransdocTransformationError],
+    ) -> 'TransdocTransformExceptionGroup':
         """Exception group of errors when performing a transformation"""
-        super().__init__(
+        return super().__new__(
+            cls,
             "Errors occurred while performing transformation",
-            exceptions,
+            excs,
         )
+
+    @override
+    def derive(self, excs):
+        return TransdocTransformExceptionGroup(excs)
