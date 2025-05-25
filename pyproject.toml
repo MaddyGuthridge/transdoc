@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Pre-processors",
     "Typing :: Typed",
 ]
-dependencies = ["click (>=8.1.7, <9)", "colored (>=2.2.5,<3.0.0)"]
+dependencies = ["click (>=8.1.7, <9)", "colored (>=2.2.5,<3.0.0)", "typing-extensions (>=4.13.2,<5.0.0)"]
 [project.optional-dependencies]
 python = ["transdoc-python (>=0.1.0, <1)"]
 
@@ -64,6 +64,57 @@ files = ["transdoc", "tests"]
 
 [tool.ruff]
 line-length = 79
+
+[tool.ruff.lint]
+select = [
+    # Common bugs
+    "E", # PyCodeStyle errors
+    "W", # PyCodeStyle warning
+    "F", # Pyflakes
+    "B", # Bugbear
+    # "S", # Bandit (security mistakes)
+
+    # Syntax
+    "C4",  # Comprehension expressions
+    "COM", # Trailing commas
+    "UP",  # Upgrade due to newer Python version
+    "TRY", # Exception-handling
+
+    # CodeCommon code simplifications
+    "SIM",
+
+    # Imports
+    "I",   # isort
+    "ICN", # Import conventions
+    "TID", # More good import practices
+
+    # Naming conventions
+    "N",
+
+    # Comments and documentation
+    "TD", # Be diligent with TODO comments
+    "D",  # Enforce documentation style
+]
+
+ignore = [
+    # Docstring writing style
+    # I actually agree with most of these for functions, but they are also
+    # applied to module and class docstrings, which is pretty annoying.
+    "D4",
+    # D203 is incompatible with D211
+    "D203",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+
+"*_test.py" = [
+    # Don't check docstrings in test suites, since tests are often
+    # self-documenting.
+    "D",
+]
 
 [tool.coverage.run]
 branch = true

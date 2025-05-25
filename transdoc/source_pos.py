@@ -1,5 +1,4 @@
-"""
-# Transdoc / Source pos
+"""# Transdoc / Source pos
 
 Definition for `SourcePos` class.
 """
@@ -9,9 +8,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class SourcePos:
-    """
-    A position within a source file.
-    """
+    """A position within a source file."""
 
     row: int
     """File row (1-indexed)"""
@@ -20,16 +17,28 @@ class SourcePos:
 
     @staticmethod
     def zero() -> "SourcePos":
-        """
-        A zeroed source position. This indicates that an error associated with
-        the file as a whole, rather than at a particular position in the file.
+        """A zeroed source position.
+
+        This indicates that an error associated with the file as a whole,
+        rather than at a particular position in the file.
         """
         return SourcePos(0, 0)
 
     def __str__(self) -> str:
+        """Stringify as row:col"""
         return f"{self.row}:{self.col}"
 
     def __add__(self, other: "SourcePos") -> "SourcePos":
+        """Add two source positions
+
+        * If row is unchanged, only adjust column.
+        * If row is changed, then add to row and replace the column.
+
+        As such, it's not really "proper" addition, as it is not commutative,
+        but imo it still makes semantic sense. It would be mathematically nicer
+        to have a `SourcePos` and a `SourceOffset` but it's not really worth
+        the effort imo.
+        """
         if other.row == 1:
             # No change in row, offset column
             return SourcePos(self.row, self.col + other.col - 1)
@@ -38,9 +47,7 @@ class SourcePos:
             return SourcePos(self.row + other.row - 1, other.col)
 
     def offset_by_str(self, string: str) -> "SourcePos":
-        """
-        Return a new `SourcePos` offset by the contents of the given string.
-        """
+        """Return a `SourcePos` offset by the contents of the given string."""
         row_offset = string.count("\n")
 
         if row_offset == 0:
@@ -52,8 +59,7 @@ class SourcePos:
 
 @dataclass(frozen=True)
 class SourceRange:
-    """
-    A range of positions within a source file.
+    """A range of positions within a source file.
 
     Range is from `start <= p < end`.
     """
@@ -65,9 +71,10 @@ class SourceRange:
 
     @staticmethod
     def zero():
-        """
-        A zeroed source position. This indicates that an error associated with
-        the file as a whole, rather than at a particular position in the file.
+        """A zeroed source position.
+
+        This indicates that an error associated with the file as a whole,
+        rather than at a particular position in the file.
         """
         return SourceRange(
             SourcePos.zero(),

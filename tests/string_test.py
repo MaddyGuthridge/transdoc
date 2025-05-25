@@ -1,13 +1,12 @@
-"""
-# Tests / string test
+"""# Tests / string test
 
 Test cases for transforming strings
 """
 
-from tests.handlers.example_handlers import SimpleHandler, UnsupportedHandler
 from pytest_mock import MockerFixture
 
 import transdoc
+from tests.handlers.example_handlers import SimpleHandler, UnsupportedHandler
 from transdoc import TransdocTransformer
 
 
@@ -16,7 +15,7 @@ def test_transforms_strings(transformer: TransdocTransformer):
 
 
 def test_transforms_using_given_handler(
-    mocker: MockerFixture, transformer: TransdocTransformer
+    mocker: MockerFixture, transformer: TransdocTransformer,
 ):
     handler = SimpleHandler()
     matches_file = mocker.spy(handler, "matches_file")

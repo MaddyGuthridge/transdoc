@@ -1,27 +1,24 @@
-"""
-# Transdoc / util
+"""# Transdoc / util
 
 Utility functions for Transdoc.
 """
 
 import sys
+
 from colored import Fore, Style
+
 from transdoc.errors import TransdocTransformationError
 
 
 def indent_by(indent: str, string: str) -> str:
-    """
-    Indent the given string using the given indentation.
-    """
+    """Indent the given string using the given indentation."""
     return "\n".join(
         f"{indent}{line.rstrip()}" for line in string.splitlines()
     ).lstrip()
 
 
 def print_error(e: Exception):
-    """
-    Utility function to print errors to `sys.stderr`.
-    """
+    """Utility function to print errors to `sys.stderr`."""
 
     def error_args(args: tuple) -> str:
         msg = []

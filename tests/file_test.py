@@ -1,5 +1,4 @@
-"""
-# Tests / file test
+"""# Tests / file test
 
 Test cases for the `transform_file` function.
 """
@@ -7,9 +6,10 @@ Test cases for the `transform_file` function.
 from io import StringIO
 
 import pytest
+
+import transdoc
 from tests.handlers.example_handlers import SimpleHandler, UnsupportedHandler
 from transdoc import TransdocTransformer
-import transdoc
 from transdoc.errors import TransdocNoHandlerError
 
 
@@ -17,7 +17,7 @@ def test_transforms_file(transformer: TransdocTransformer):
     input = StringIO("Example text")
     output = StringIO()
     transdoc.transform_file(
-        [SimpleHandler()], transformer, "<string>", input, output
+        [SimpleHandler()], transformer, "<string>", input, output,
     )
     output.seek(0)
     # SimpleHandler doesn't write output
@@ -29,5 +29,5 @@ def test_no_matching_handlers(transformer: TransdocTransformer):
     output = StringIO()
     with pytest.raises(TransdocNoHandlerError):
         transdoc.transform_file(
-            [UnsupportedHandler()], transformer, "<string>", input, output
+            [UnsupportedHandler()], transformer, "<string>", input, output,
         )

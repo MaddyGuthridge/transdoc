@@ -1,18 +1,17 @@
-"""
-# Transdoc / transform file
+"""# Transdoc / transform file
 
 Process a single file using transdoc.
 """
 
 import logging
-from typing import IO, Sequence
+from collections.abc import Sequence
+from typing import IO
 
 from transdoc.__transformer import TransdocTransformer
 from transdoc.errors import TransdocNoHandlerError
 from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
 from transdoc.source_pos import SourceRange
-
 
 log = logging.getLogger("transdoc.transform_file")
 
@@ -24,9 +23,7 @@ def transform_file(
     in_file: IO,
     out_file: IO | None,
 ) -> None:
-    """
-    Given an input file, its path and an output file, transform the file using
-    the given handlers.
+    """Transform the input file into the output file.
 
     If no handlers are able to handle the file, a `TransdocHandlerError` is
     raised. To avoid this, explicitly choose a handler, and use its

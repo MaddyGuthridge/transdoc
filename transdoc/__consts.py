@@ -1,5 +1,4 @@
-"""
-# Transdoc / Consts
+"""# Transdoc / Consts
 
 Constants used by Transdoc
 """

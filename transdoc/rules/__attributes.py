@@ -1,16 +1,15 @@
-"""
-# Transdoc / Rules / Attributes
+"""# Transdoc / Rules / Attributes
 
 Rule for listing the attributes of the given object.
 """
 
 import importlib
-from typing import Optional, Callable, Any
+from collections.abc import Callable
+from typing import Any
 
 
 def attributes_default_filter(attr_name: str, attr_object: Any) -> bool:
-    """
-    Default filter used by attributes rule.
+    """Default filter used by attributes rule.
 
     Only keeps attrs where the name doesn't start with `_`.
     """
@@ -19,33 +18,29 @@ def attributes_default_filter(attr_name: str, attr_object: Any) -> bool:
 
 def attributes_default_formatter(
     module: str,
-    object: Optional[str],
+    object: str | None,
     attribute: str,
 ) -> str:
-    """
-    Default formatter used by attributes rule.
-    """
+    """Default formatter used by attributes rule."""
     return f"* {attribute}"
 
 
 def python_object_attributes_rule_gen(
     *,
-    filter: Optional[Callable[[str, Any], bool]] = None,
-    formatter: Optional[Callable[[str, Optional[str], str], str]] = None,
-) -> Callable[[str, Optional[str]], str]:
-    """
-    Create and return a `python_object_attributes` rule that uses the given
-    formatter and/or filter.
+    filter: Callable[[str, Any], bool] | None = None,
+    formatter: Callable[[str, str | None, str], str] | None = None,
+) -> Callable[[str, str | None], str]:
+    """Create a `python_object_attributes` rule with a formatter and/or filter.
 
     This can be used in a list of rules as follows:
 
     ```py
     from transdoc.rules import attributes_generator
 
-    def my_custom_formatter(mod, obj, attr):
+    def custom_formatter(mod, obj, attr):
         return f"{mod}.{obj}.{attr}"
 
-    attributes = python_object_attributes_rule_gen(formatter=my_custom_formatter)
+    attributes = python_object_attributes_rule_gen(formatter=custom_formatter)
     ```
 
     Parameters
@@ -59,12 +54,12 @@ def python_object_attributes_rule_gen(
 
     formatter : (str, Optional[str], str) -> str, optional
         A function to format the documentation for the attribute. It should
-        accept the module name (eg `"org.serious_company"`), the object name (eg
-        `"FizzBuzz"`), and the attribute name (eg `"number_printer_factory"`),
-        and should return text that will be used in place of the object. This
-        can be used to generate Markdown links, or do other useful things. By
-        default, a bullet point followed by the name of the attribute will be
-        provided, for example `"* position"`.
+        accept the module name (eg `"org.serious_company"`), the object name
+        (eg `"FizzBuzz"`), and the attribute name (eg
+        `"number_printer_factory"`), and should return text that will be used
+        in place of the object. This can be used to generate Markdown links, or
+        do other useful things. By default, a bullet point followed by the name
+        of the attribute will be provided, for example `"* position"`.
 
     Returns
     -------
@@ -79,7 +74,7 @@ def python_object_attributes_rule_gen(
 
     def python_object_attributes(
         module: str,
-        object: Optional[str] = None,
+        object: str | None = None,
     ) -> str:
         if object is None:
             data = importlib.import_module(module)

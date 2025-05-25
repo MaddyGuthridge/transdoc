@@ -1,25 +1,21 @@
-"""
-# Transdoc / Handlers / API
+"""# Transdoc / Handlers / API
 
 API definition for Transdoc handler modules.
 """
 
 from abc import abstractmethod
-from typing import Protocol, IO, runtime_checkable
+from typing import IO, Protocol, runtime_checkable
+
 from transdoc.__transformer import TransdocTransformer
 
 
 @runtime_checkable
 class TransdocHandler(Protocol):
-    """
-    A language handler plugin for transdoc.
-    """
+    """A language handler plugin for transdoc."""
 
     @abstractmethod
     def matches_file(self, file_path: str) -> bool:
-        """
-        Given a file path, return whether this handler is capable of
-        transforming the given file.
+        """Given a file path, return whether this handler can handle the file.
 
         Parameters
         ----------
@@ -41,7 +37,8 @@ class TransdocHandler(Protocol):
         in_file: IO,
         out_file: IO | None,
     ) -> None:
-        """
+        """Transform `in_file` into `out_file`
+
         Transforms the contents of the file at `in_path`, writing the
         transformed output into the file at `out_path`.
 

@@ -1,37 +1,53 @@
-"""
-# Transdoc / transform tree
+"""# Transdoc / transform tree
 
 Process an entire directory tree (or a single file) using transdoc.
 """
 
 import logging
 import os
-from shutil import copyfile, rmtree
-from pathlib import Path
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Optional, Sequence
+from pathlib import Path
+from shutil import copyfile, rmtree
 
 from transdoc.__transformer import TransdocTransformer
+from transdoc.errors import (
+    TransdocOutputDirectoryNonEmptyError,
+    TransdocOutputFileExistsError,
+    TransdocTransformationError,
+    TransdocTransformExceptionGroup,
+)
 from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
-
 
 log = logging.getLogger("transdoc.tree_transform")
 
 
 @dataclass
 class FileMapping:
+    """Mapping between an input and output pair of files"""
+
     input: Path
-    output: Optional[Path]
+    """Input file"""
+    output: Path | None
+    """Output file, or `None` if no output should be produced"""
 
 
 def expand_tree(
     input: Path,
-    output: Optional[Path],
+    output: Path | None,
 ) -> list[FileMapping]:
-    """
-    Given a path, expand it into a list of files that are descendants of that
-    path if the input is a directory.
+    """Expand a path to a list of all files within that path
+
+    * If `input` is a directory, this will recursively find all child files.
+    * If `input` is a file, just return it by itself.
+
+    Returns
+    -------
+
+    list[FileMapping]
+        A list of file mappings, where each contains an input and output
+        `Path`.
     """
     file_mappings: list[FileMapping] = []
     if input.is_dir():
@@ -46,7 +62,7 @@ def expand_tree(
                     FileMapping(
                         in_file,
                         out_file,
-                    )
+                    ),
                 )
     else:
         file_mappings.append(FileMapping(input, output))
@@ -62,8 +78,7 @@ def transform_tree(
     *,
     force: bool = False,
 ) -> None:
-    """
-    Transform all files within a tree.
+    """Transform all files within a tree.
 
     This takes all files that are descendants of the input file, and transforms
     them, writing the results into the corresponding location on the output
@@ -97,30 +112,25 @@ def transform_tree(
     """
     file_mappings = expand_tree(input, output)
 
-    if not force:
-        if output is not None and output.exists():
-            if output.is_dir():
-                if len(os.listdir(output)):
-                    raise FileExistsError(
-                        f"Output directory '{output}' exists and is not empty"
-                    )
-                else:
-                    # Output dir is empty directory, so no error
-                    log.info(
-                        f"Output dir '{output}' exists, but is empty. "
-                        f"Will output to it."
-                    )
+    if not force and output is not None and output.exists():
+        if output.is_dir():
+            if len(os.listdir(output)):
+                raise TransdocOutputDirectoryNonEmptyError(output)
             else:
-                raise FileExistsError(
-                    f"Output location '{output}' already exists"
+                # Output dir is empty directory, so no error
+                log.info(
+                    f"Output dir '{output}' exists, but is empty. "
+                    f"Will output to it.",
                 )
+        else:
+            raise TransdocOutputFileExistsError(output)
 
     # Remove the output file/directory
     if output is not None and output.is_dir() and force:
         log.info(f"Removing output dir {output}")
         rmtree(output)
 
-    errors: list[Exception] = []
+    errors: list[TransdocTransformationError] = []
 
     # Consider using threading to speed this process up
     for mapping in file_mappings:
@@ -137,14 +147,14 @@ def transform_tree(
             else:
                 act = "skipping"
             log.info(
-                f"No handlers found that match file {mapping.input}, {act}"
+                f"No handlers found that match file {mapping.input}, {act}",
             )
         else:
             # Handler found
             log.info(f"Using handler {handler} to process {mapping.input}")
             # Now open files
-            in_file = open(mapping.input)
-            out_file = open(mapping.output, "w") if mapping.output else None
+            in_file = open(mapping.input)  # noqa: SIM115
+            out_file = open(mapping.output, "w") if mapping.output else None  # noqa: SIM115
             # And perform the transformation
             try:
                 handler.transform_file(
@@ -153,13 +163,11 @@ def transform_tree(
                     in_file,
                     out_file,
                 )
-            except Exception as e:
+            except TransdocTransformationError as e:
                 msg = f"Error occurred while transforming {mapping.input}"
                 log.exception(msg)
                 e.add_note(msg)
                 errors.append(e)
 
     if len(errors):
-        raise ExceptionGroup(
-            "Errors occurred while performing transformation", errors
-        )
+        raise TransdocTransformExceptionGroup(errors)

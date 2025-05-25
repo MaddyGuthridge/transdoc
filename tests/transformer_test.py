@@ -1,17 +1,16 @@
-"""
-# Tests / Transformer test
+"""# Tests / Transformer test
 
 Test cases for TransdocTransformer
 """
 
 import pytest
+
 from transdoc import TransdocTransformer
 from transdoc.errors import (
     TransdocEvaluationError,
     TransdocNameError,
     TransdocSyntaxError,
 )
-
 
 ###############################################################################
 
@@ -61,7 +60,7 @@ def test_multiline_python_fn_input_rule(transformer: TransdocTransformer):
 def test_rules_respect_indentation(transformer: TransdocTransformer):
     assert (
         transformer.transform(
-            "Call: {{multiline}}", "<string>", indentation="    "
+            "Call: {{multiline}}", "<string>", indentation="    ",
         )
         == "Call: Multiple\n    Lines"
     )
@@ -127,7 +126,7 @@ def test_name_error(transformer: TransdocTransformer, input: str):
     ],
 )
 def test_eval_error(
-    transformer: TransdocTransformer, input: str, err_type: type[Exception]
+    transformer: TransdocTransformer, input: str, err_type: type[Exception],
 ):
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(input, "<string>")
@@ -137,12 +136,11 @@ def test_eval_error(
 
 
 def test_all_errors_reported(transformer: TransdocTransformer):
-    """
-    When multiple errors occur when evaluating rules, are they all reported?
+    """When multiple errors occur when evaluating rules, are they all reported?
     """
     with pytest.raises(ExceptionGroup) as excinfo:
         transformer.transform(
-            "{{undefined}} {{error[TypeError]}} {{unclosed", "<string>"
+            "{{undefined}} {{error[TypeError]}} {{unclosed", "<string>",
         )
     assert excinfo.group_contains(TransdocNameError)
     assert excinfo.group_contains(TransdocEvaluationError)

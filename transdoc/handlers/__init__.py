@@ -1,25 +1,25 @@
-"""
-# Transdoc / Handlers
+"""# Transdoc / Handlers
 
 Code defining Transdoc handlers.
 """
 
 import logging
-
+from collections.abc import Sequence
 from importlib import metadata
-from typing import Sequence
 
-from transdoc.errors import TransdocHandlerLoadError
+from transdoc.errors import (
+    TransdocHandlerConstructorError,
+    TransdocHandlerProtocolError,
+)
+
 from .api import TransdocHandler
 from .plaintext import PlaintextHandler
-
 
 log = logging.getLogger("transdoc.handlers")
 
 
 def get_all_handlers() -> list[TransdocHandler]:
-    """
-    Returns a list of all handler objects.
+    """Returns a list of all handler objects.
 
     This includes Transdoc built-in handlers, as well as any detected plugins.
 
@@ -37,13 +37,9 @@ def get_all_handlers() -> list[TransdocHandler]:
             constructor: type[TransdocHandler] = discovered.load()
             handler = constructor()
         except Exception as e:
-            raise TransdocHandlerLoadError(
-                f"Error loading discovered handler plugin: {discovered}"
-            ) from e
+            raise TransdocHandlerConstructorError(discovered) from e
         if not isinstance(handler, TransdocHandler):
-            raise TransdocHandlerLoadError(
-                f"Plugin {discovered} doesn't match TransdocHandler protocol"
-            )
+            raise TransdocHandlerProtocolError(discovered)
         handlers.append(handler)
         log.info(f"Loaded handler plugin: {discovered}")
 
@@ -54,9 +50,7 @@ def find_matching_handler(
     handlers: Sequence[TransdocHandler],
     file_path: str,
 ) -> TransdocHandler | None:
-    """
-    Find and return the first `TransdocHandler` capable of transforming the
-    given file.
+    """Find the first `TransdocHandler` capable of transforming the given file.
 
     If no match can be found, returns `None`.
 

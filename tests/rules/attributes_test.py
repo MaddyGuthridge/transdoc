@@ -1,11 +1,11 @@
-"""
-# Transdoc / Tests / Rules / Attributes Test
+"""# Transdoc / Tests / Rules / Attributes Test
 
 Test cases for Transdoc's built-in `attributes` rule.
 """
 
 from textwrap import dedent
-from typing import Any, Optional
+from typing import Any
+
 from transdoc import TransdocTransformer
 from transdoc.rules import (
     python_object_attributes,
@@ -14,8 +14,7 @@ from transdoc.rules import (
 
 
 class Example:
-    """
-    {{attributes("tests.rules.attributes_test", "Example")}}
+    """{{attributes("tests.rules.attributes_test", "Example")}}
     """
 
     some_attribute = "value"
@@ -30,7 +29,7 @@ class Example:
 def test_class_attributes():
     transformer = TransdocTransformer({"attributes": python_object_attributes})
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         * some_attribute
         * some_fn
@@ -41,14 +40,14 @@ def test_class_attributes():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
 
 
 def test_module_attrs():
     transformer = TransdocTransformer({"attributes": python_object_attributes})
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         * hello
         """.lstrip("\n").rstrip(),
@@ -58,7 +57,7 @@ def test_module_attrs():
             "{{attributes('tests.data.module')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
 
 
@@ -67,10 +66,10 @@ def test_custom_filter():
         return name == "__init__"
 
     transformer = TransdocTransformer(
-        {"attributes": python_object_attributes_rule_gen(filter=filter_attrs)}
+        {"attributes": python_object_attributes_rule_gen(filter=filter_attrs)},
     )
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         * __init__
         """.lstrip("\n").rstrip(),
@@ -81,25 +80,25 @@ def test_custom_filter():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
 
 
 def test_custom_formatter():
     def format_attrs(
-        module: str, object: Optional[str], attribute: str
+        module: str, object: str | None, attribute: str,
     ) -> str:
         return f"{module}.{object}.{attribute}"
 
     transformer = TransdocTransformer(
         {
             "attributes": python_object_attributes_rule_gen(
-                formatter=format_attrs
-            )
-        }
+                formatter=format_attrs,
+            ),
+        },
     )
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         tests.rules.attributes_test.Example.some_attribute
         tests.rules.attributes_test.Example.some_fn
@@ -111,5 +110,5 @@ def test_custom_formatter():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )

@@ -1,29 +1,27 @@
-"""
-# Transdoc / CLI / Main
+"""# Transdoc / CLI / Main
 
 Main entrypoint to the Transdoc CLI.
 """
 
-import logging.config
-import sys
-import os
-import click
-from pathlib import Path
-from typing import IO, Optional
 import logging
+import os
+import sys
+from pathlib import Path
+from typing import IO
+
+import click
 
 from transdoc import (
-    transform_tree,
-    transform_file,
     TransdocTransformer,
     get_all_handlers,
+    transform_file,
+    transform_tree,
 )
+from transdoc.__consts import VERSION
 from transdoc.util import print_error
+
 from .mutex import Mutex
 from .util import pride
-
-from transdoc.__consts import VERSION
-
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +35,10 @@ HELP_TEXT = f"""
 {pride("=" * help_text_width)}
 
 \b
-{"Transform your documentation by embedding results from Python function calls.".center(help_text_width)}
+{
+    "Transform your documentation by embedding results from Python function "
+    "calls.".center(help_text_width)
+}
 """
 
 HELP_EPILOG = f"""
@@ -75,7 +76,7 @@ def handle_verbose(verbose: int):
     "--rule-file",
     type=click.Path(exists=True, path_type=Path),
     required=True,
-    help="Path to any Python file/module containing rules for Transdoc to use.",
+    help="Path to a Python file/module containing rules for Transdoc to use.",
 )
 @click.option(
     "-o",
@@ -104,7 +105,7 @@ def handle_verbose(verbose: int):
 def cli(
     input: str,
     rule_file: Path,
-    output: Optional[Path] = None,
+    output: Path | None = None,
     *,
     dryrun: bool = False,
     force: bool = False,
@@ -125,7 +126,7 @@ def cli(
     if input == "-":
         # Transform stdin
         if output is not None:
-            out_file: IO | None = open(output, "w")
+            out_file: IO | None = open(output, "w")  # noqa: SIM115
         else:
             out_file = sys.stdout
         try:

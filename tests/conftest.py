@@ -1,17 +1,16 @@
-"""
-# Tests / Conftest
+"""# Tests / Conftest
 
 Pytest configuration
 """
 
 from importlib import metadata
 from typing import Any
+
 import pytest
 from pytest_mock import MockerFixture
 
-from transdoc.rules import file_contents
 from transdoc import TransdocTransformer
-
+from transdoc.rules import file_contents
 
 # Code for mocking Python's entry-points system
 ###############################################################################
@@ -42,12 +41,9 @@ from transdoc import TransdocTransformer
 
 
 def make_entry_point_from_plugin(
-    name: str, cls: type[Any], dist: metadata.Distribution | None = None
+    name: str, cls: type[Any], dist: metadata.Distribution | None = None,
 ) -> metadata.EntryPoint:
-    """
-    Create and return an importlib.metadata.EntryPoint object for the given
-    plugin class.
-    """
+    """Create an `importlib.metadata.EntryPoint` for the given plugin class."""
     group: str | None = getattr(cls, "group", None)
     ep = metadata.EntryPoint(
         name=name,
@@ -69,8 +65,7 @@ def mock_metadata_entry_points(
     name: str = "my-plugin",
     dist: metadata.Distribution | None = None,
 ) -> None:
-    """
-    Add a mock entry-point to importlib's metadata.
+    """Add a mock entry-point to importlib's metadata.
 
     The entry-point's group is determined using the static `group` attribute of
     the given `cls`.
@@ -84,6 +79,7 @@ def mock_metadata_entry_points(
         `"my-plugin"`.
         dist (metadata.Distribution, optional): distribution info for the
         plugin. Defaults to `None`.
+
     """
     mocker.patch.object(
         metadata,
@@ -98,6 +94,7 @@ def mock_metadata_entry_points(
 
 @pytest.fixture
 def transformer():
+    """Create a simple `TransdocTransformer` instance."""
     return TransdocTransformer(
         {
             "simple": simple_rule,
@@ -106,7 +103,7 @@ def transformer():
             "reprs": reprs_rule,
             "error": error_rule,
             "file_contents": file_contents,
-        }
+        },
     )
 
 
@@ -114,20 +111,28 @@ def transformer():
 
 
 def simple_rule():
+    """A simple transdoc rule"""
     return "Simple rule"
 
 
 def multiline_rule(text=""):
+    """A transdoc rule that adds multiple lines of output"""
     return f"Multiple\nLines {text}".strip()
 
 
 def reprs_rule(*data: Any) -> str:
+    """Returns the reprs of all objects given as parameters"""
     return "\n".join(repr(item) for item in data)
 
 
 def echo_rule(value):
+    """Echoes the given value"""
     return value
 
 
 def error_rule(exc_type: str = "TypeError"):
+    """Raise the given type as an exception.
+
+    For example `{{error_rule[ValueError]}}` will raise a `ValueError`.
+    """
     raise eval(exc_type)

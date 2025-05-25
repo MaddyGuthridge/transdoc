@@ -1,5 +1,4 @@
-"""
-# Transdoc / Tests
+"""# Transdoc / Tests
 
 Test suite for Transdoc
 """
