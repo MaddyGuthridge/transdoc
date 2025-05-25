@@ -3,7 +3,7 @@
 Simple Transdoc handlers used for testing.
 """
 
-from typing import IO
+from typing import IO, override
 
 import transdoc
 from transdoc.handlers.api import TransdocHandler
@@ -14,9 +14,11 @@ class SimpleHandler(TransdocHandler):
 
     group = "transdoc.handlers"
 
+    @override
     def matches_file(self, file_path: str) -> bool:
         return True
 
+    @override
     def transform_file(
         self,
         transformer: transdoc.TransdocTransformer,
@@ -33,9 +35,11 @@ class UnsupportedHandler(TransdocHandler):
 
     group = "transdoc.handlers"
 
+    @override
     def matches_file(self, file_path: str) -> bool:
         return False
 
+    @override
     def transform_file(
         self,
         transformer: transdoc.TransdocTransformer,
@@ -53,11 +57,14 @@ class FailToLoadHandler(TransdocHandler):
     group = "transdoc.handlers"
 
     def __init__(self) -> None:
-        raise RuntimeError("Intentional failure to load plugin")
+        """Intentionally fail"""
+        raise RuntimeError("Intentional failure to load plugin")  # noqa: TRY003
 
+    @override
     def matches_file(self, file_path: str) -> bool:
         raise NotImplementedError()
 
+    @override
     def transform_file(
         self,
         transformer: transdoc.TransdocTransformer,

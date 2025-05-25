@@ -18,6 +18,7 @@ def test_transforms_directory(transformer: TransdocTransformer):
     """Creates an output directory if one does not exist, then transforms files
     into it
     """
+
     temp = Path("temp")
     rmtree(temp, ignore_errors=True)
     transform_tree(
@@ -40,6 +41,7 @@ def test_transforms_single_file(transformer: TransdocTransformer):
     """Creates an output directory if one does not exist, then transforms files
     into it
     """
+
     out = Path("temp/README.md")
     rmtree("temp", ignore_errors=True)
     transform_tree(

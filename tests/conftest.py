@@ -43,9 +43,7 @@ from transdoc.rules import file_contents
 def make_entry_point_from_plugin(
     name: str, cls: type[Any], dist: metadata.Distribution | None = None,
 ) -> metadata.EntryPoint:
-    """Create and return an importlib.metadata.EntryPoint object for the given
-    plugin class.
-    """
+    """Create an `importlib.metadata.EntryPoint` for the given plugin class."""
     group: str | None = getattr(cls, "group", None)
     ep = metadata.EntryPoint(
         name=name,
@@ -96,6 +94,7 @@ def mock_metadata_entry_points(
 
 @pytest.fixture
 def transformer():
+    """Create a simple `TransdocTransformer` instance."""
     return TransdocTransformer(
         {
             "simple": simple_rule,
@@ -112,20 +111,28 @@ def transformer():
 
 
 def simple_rule():
+    """A simple transdoc rule"""
     return "Simple rule"
 
 
 def multiline_rule(text=""):
+    """A transdoc rule that adds multiple lines of output"""
     return f"Multiple\nLines {text}".strip()
 
 
 def reprs_rule(*data: Any) -> str:
+    """Returns the reprs of all objects given as parameters"""
     return "\n".join(repr(item) for item in data)
 
 
 def echo_rule(value):
+    """Echoes the given value"""
     return value
 
 
 def error_rule(exc_type: str = "TypeError"):
+    """Raise the given type as an exception.
+
+    For example `{{error_rule[ValueError]}}` will raise a `ValueError`.
+    """
     raise eval(exc_type)

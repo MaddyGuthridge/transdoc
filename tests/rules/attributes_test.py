@@ -29,7 +29,7 @@ class Example:
 def test_class_attributes():
     transformer = TransdocTransformer({"attributes": python_object_attributes})
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         * some_attribute
         * some_fn
@@ -40,7 +40,7 @@ def test_class_attributes():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
 
 
@@ -69,7 +69,7 @@ def test_custom_filter():
         {"attributes": python_object_attributes_rule_gen(filter=filter_attrs)},
     )
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         * __init__
         """.lstrip("\n").rstrip(),
@@ -80,7 +80,7 @@ def test_custom_filter():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
 
 
@@ -98,7 +98,7 @@ def test_custom_formatter():
         },
     )
 
-    EXPECTED = dedent(
+    expected = dedent(
         """
         tests.rules.attributes_test.Example.some_attribute
         tests.rules.attributes_test.Example.some_fn
@@ -110,5 +110,5 @@ def test_custom_formatter():
             "{{attributes('tests.rules.attributes_test', 'Example')}}",
             "<string>",
         )
-        == EXPECTED
+        == expected
     )
