@@ -75,9 +75,9 @@ select = [
     # "S", # Bandit (security mistakes)
 
     # Syntax
-    "C4", # Comprehension expressions
+    "C4",  # Comprehension expressions
     "COM", # Trailing commas
-    "UP", # Upgrade due to newer Python version
+    "UP",  # Upgrade due to newer Python version
     "TRY", # Exception-handling
 
     # CodeCommon code simplifications
@@ -93,7 +93,7 @@ select = [
 
     # Comments and documentation
     "TD", # Be diligent with TODO comments
-    "D", # Enforce documentation style
+    "D",  # Enforce documentation style
 ]
 
 ignore = [
@@ -101,6 +101,19 @@ ignore = [
     # I actually agree with most of these for functions, but they are also
     # applied to module and class docstrings, which is pretty annoying.
     "D4",
+    # D203 is incompatible with D211
+    "D203",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+
+"*_test.py" = [
+    # Don't check docstrings in test suites, since tests are often
+    # self-documenting.
+    "D",
 ]
 
 [tool.coverage.run]
