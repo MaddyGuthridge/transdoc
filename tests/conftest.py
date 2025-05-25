@@ -1,17 +1,16 @@
-"""
-# Tests / Conftest
+"""# Tests / Conftest
 
 Pytest configuration
 """
 
 from importlib import metadata
 from typing import Any
+
 import pytest
 from pytest_mock import MockerFixture
 
-from transdoc.rules import file_contents
 from transdoc import TransdocTransformer
-
+from transdoc.rules import file_contents
 
 # Code for mocking Python's entry-points system
 ###############################################################################
@@ -42,10 +41,9 @@ from transdoc import TransdocTransformer
 
 
 def make_entry_point_from_plugin(
-    name: str, cls: type[Any], dist: metadata.Distribution | None = None
+    name: str, cls: type[Any], dist: metadata.Distribution | None = None,
 ) -> metadata.EntryPoint:
-    """
-    Create and return an importlib.metadata.EntryPoint object for the given
+    """Create and return an importlib.metadata.EntryPoint object for the given
     plugin class.
     """
     group: str | None = getattr(cls, "group", None)
@@ -69,8 +67,7 @@ def mock_metadata_entry_points(
     name: str = "my-plugin",
     dist: metadata.Distribution | None = None,
 ) -> None:
-    """
-    Add a mock entry-point to importlib's metadata.
+    """Add a mock entry-point to importlib's metadata.
 
     The entry-point's group is determined using the static `group` attribute of
     the given `cls`.
@@ -84,6 +81,7 @@ def mock_metadata_entry_points(
         `"my-plugin"`.
         dist (metadata.Distribution, optional): distribution info for the
         plugin. Defaults to `None`.
+
     """
     mocker.patch.object(
         metadata,
@@ -106,7 +104,7 @@ def transformer():
             "reprs": reprs_rule,
             "error": error_rule,
             "file_contents": file_contents,
-        }
+        },
     )
 
 

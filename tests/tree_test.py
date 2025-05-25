@@ -1,23 +1,21 @@
-"""
-# Tests / Tree test
+"""# Tests / Tree test
 
 Test cases for `transdoc.transform_tree`
 """
 
 from pathlib import Path
 from shutil import rmtree
-from PIL import Image
-import pytest
 
-from transdoc import transform_tree
-from transdoc import TransdocTransformer
+import pytest
+from PIL import Image
+
+from transdoc import TransdocTransformer, transform_tree
 from transdoc.errors import TransdocNameError
 from transdoc.handlers.plaintext import PlaintextHandler
 
 
 def test_transforms_directory(transformer: TransdocTransformer):
-    """
-    Creates an output directory if one does not exist, then transforms files
+    """Creates an output directory if one does not exist, then transforms files
     into it
     """
     temp = Path("temp")
@@ -39,8 +37,7 @@ def test_transforms_directory(transformer: TransdocTransformer):
 
 
 def test_transforms_single_file(transformer: TransdocTransformer):
-    """
-    Creates an output directory if one does not exist, then transforms files
+    """Creates an output directory if one does not exist, then transforms files
     into it
     """
     out = Path("temp/README.md")

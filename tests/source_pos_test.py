@@ -1,5 +1,4 @@
-"""
-# Tests / Source pos test
+"""# Tests / Source pos test
 
 Test cases for SourcePos and SourceRange classes.
 """

@@ -1,10 +1,8 @@
-"""
-# Transdoc / rule
+"""# Transdoc / rule
 
 Type definition for Transdoc rules
 """
-from typing import Callable
-
+from collections.abc import Callable
 
 TransdocRule = Callable[..., str]
 """

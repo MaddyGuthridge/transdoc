@@ -1,5 +1,4 @@
-"""
-# Tests / Handlers / Plaintext test
+"""# Tests / Handlers / Plaintext test
 
 Test cases for plaintext handler.
 """

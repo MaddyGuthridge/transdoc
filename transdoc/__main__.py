@@ -1,15 +1,14 @@
-"""
-# Transdoc / main
+"""# Transdoc / main
 
 Main entry-point to the transdoc executable.
 
 Usage: transdoc [path] -o [output path] -r [path to rules module]
 """
 
-import sys
 import os
-from .__cli import cli
+import sys
 
+from .__cli import cli
 
 if os.getenv("NO_PRIDE"):
     import ctypes

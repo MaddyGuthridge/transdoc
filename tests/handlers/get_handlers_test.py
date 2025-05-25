@@ -1,5 +1,4 @@
-"""
-# Tests / Handlers / Get handlers test
+"""# Tests / Handlers / Get handlers test
 
 Test cases for `transdoc.handlers.get_all_handlers`
 """
@@ -8,21 +7,22 @@ import jestspectation as expect
 import pytest
 from pytest_mock import MockerFixture
 
+import transdoc
 from tests.conftest import mock_metadata_entry_points
+from transdoc.errors import TransdocHandlerLoadError
+from transdoc.handlers.plaintext import PlaintextHandler
+
 from .example_handlers import (
     FailToLoadHandler,
     ProtocolMismatchHandler,
     SimpleHandler,
 )
-import transdoc
-from transdoc.errors import TransdocHandlerLoadError
-from transdoc.handlers.plaintext import PlaintextHandler
 
 
 def test_default_handlers():
     # By default, only the plaintext handler is included
     assert transdoc.handlers.get_all_handlers() == [
-        expect.Any(PlaintextHandler)
+        expect.Any(PlaintextHandler),
     ]
 
 

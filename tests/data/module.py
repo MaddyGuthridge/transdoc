@@ -1,5 +1,4 @@
-"""
-Tests / Data / Module
+"""Tests / Data / Module
 
 Sample Python module.
 

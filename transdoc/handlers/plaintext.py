@@ -1,23 +1,23 @@
-"""
-# Transdoc / Handlers / Plaintext
+"""# Transdoc / Handlers / Plaintext
 
 A Transdoc handler for plain-text files.
 """
 
 from pathlib import Path
-from typing import IO
-from transdoc import TransdocTransformer
+from typing import IO, override
+
+from transdoc.__transformer import TransdocTransformer
 from transdoc.handlers import TransdocHandler
 
 
 class PlaintextHandler(TransdocHandler):
-    """
-    Transdoc handler for plain-text files.
-    """
+    """Transdoc handler for plain-text files."""
 
     def __repr__(self) -> str:
+        """String representation"""
         return "PlaintextHandler"
 
+    @override
     def matches_file(self, file_path: str) -> bool:
         return (
             # String inputs
@@ -26,6 +26,7 @@ class PlaintextHandler(TransdocHandler):
             or Path(file_path).suffix in [".txt", ".md", ".ascii"]
         )
 
+    @override
     def transform_file(
         self,
         transformer: TransdocTransformer,

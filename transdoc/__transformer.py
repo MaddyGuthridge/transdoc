@@ -1,41 +1,39 @@
-"""
-# Transdoc / Transformer
+"""# Transdoc / Transformer
 
 Code that transforms input strings given a set of rules.
 """
 
-import sys
 import importlib.util
+import re
+import sys
 from io import StringIO
 from pathlib import Path
-import re
 from typing import Any
 
-from transdoc import TransdocRule
-from transdoc.util import indent_by
-from transdoc.source_pos import SourcePos, SourceRange
+from transdoc.__rule import TransdocRule
 from transdoc.errors import (
-    TransdocTransformationError,
     TransdocEvaluationError,
-    TransdocSyntaxError,
     TransdocNameError,
+    TransdocSyntaxError,
+    TransdocTransformationError,
+    TransdocTransformExceptionGroup,
 )
+from transdoc.source_pos import SourcePos, SourceRange
+from transdoc.util import indent_by
 
 
 class TransdocTransformer:
-    """
-    Transdoc transformer, responsible for applying rules to given inputs.
-    """
+    """Transdoc transformer, responsible for applying rules to given inputs."""
 
     def __init__(self, rules: dict[str, TransdocRule]) -> None:
-        """
-        Create an instance of a TransdocTransformer, given the given rule-set.
+        """Create an instance of a TransdocTransformer with the given rule-set.
 
         Parameters
         ----------
         rules : dict[str, TransdocRule]
             Dictionary, mapping between rule names, and their corresponding
             functions.
+
         """
         self.__rules = rules
 
@@ -44,8 +42,7 @@ class TransdocTransformer:
 
     @classmethod
     def from_file(cls, rule_file: Path) -> "TransdocTransformer":
-        """
-        Create a TransdocTransformer by loading rules from a Python file.
+        """Create a TransdocTransformer by loading rules from a Python file.
 
         Items are considered to be rules if they are callable, and if they are
         contained within the module's `__all__` attribute (if one exists).
@@ -59,6 +56,7 @@ class TransdocTransformer:
         -------
         TransdocTransformer
             Transformer with rules loaded from the given Python file.
+
         """
         # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
         module_name = (
@@ -70,18 +68,12 @@ class TransdocTransformer:
         sys.path.append(str(rule_file.parent.absolute()))
         # Now begin the import
         spec = importlib.util.spec_from_file_location(module_name, rule_file)
-        if spec is None:
-            raise ImportError(
-                f"Import spec for rule file '{rule_file}' was None"
-            )
+        assert spec is not None, "Import spec for rule file was None"
 
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
 
-        if spec.loader is None:
-            raise ImportError(
-                f"Spec loader for rule file '{rule_file}' was None"
-            )
+        assert spec.loader is not None, "Spec loader for rule file was None"
 
         # Any exceptions this raises get caught by the calling code
         try:
@@ -89,17 +81,17 @@ class TransdocTransformer:
         except BaseException as e:
             e.add_note(
                 f"This exception occurred during execution of rule file "
-                f"{rule_file}. It is unlikely to be an issue with Transdoc."
+                f"{rule_file}. It is unlikely to be an issue with Transdoc.",
             )
-            raise e
+            raise
 
         return cls.from_namespace(module)
 
     @classmethod
     def from_namespace(cls, namespace: Any) -> "TransdocTransformer":
-        """
-        Create a `TransdocTransformer` from attributes on a namespace (module
-        or object).
+        """Create a `TransdocTransformer` from attributes on a namespace.
+
+        A namespace can be any object, including modules.
 
         Attributes are considered to be rules if they are callable, and if they
         are contained within the namespace's `__all__` attribute (if one
@@ -134,8 +126,7 @@ class TransdocTransformer:
         position: SourceRange,
         indent: str,
     ) -> str:
-        """
-        Execute a command, alongside the given set of rules.
+        """Execute a command, alongside the given set of rules.
 
         Returns the output of the given command.
         """
@@ -143,7 +134,9 @@ class TransdocTransformer:
         def name_error(name: str):
             """Report a NameError"""
             return TransdocNameError(
-                filename, position, f"Unrecognised rule name '{rule}'"
+                filename,
+                position,
+                f"Unrecognised rule name '{rule}'",
             )
 
         def eval_error():
@@ -188,18 +181,20 @@ class TransdocTransformer:
         # If we reach this point, it's not valid data, and we should give an
         # error
         raise TransdocSyntaxError(
-            filename, position, "unable to evaluate rule due to invalid syntax"
+            filename,
+            position,
+            "unable to evaluate rule due to invalid syntax",
         )
 
     def transform(
         self,
         input: str,
         filename: str,
-        position_offset: SourcePos = SourcePos(1, 1),
+        # `SourcePos` is an immutable type, so is ok to have a default value
+        position_offset: SourcePos = SourcePos(1, 1),  # noqa: B008
         indentation: str = "",
     ) -> str:
-        """
-        Apply the Transdoc rules to the given input, returning the result.
+        r"""Apply the Transdoc rules to the given input, returning the result.
 
         Parameters
         ----------
@@ -212,7 +207,7 @@ class TransdocTransformer:
             Source position to use when offsetting source positions in errors.
         indentation : str, optional
             String to use for indentation (eg `' ' * 4` for 4 spaces, or
-            `'\\t'` for one tab).
+            `'\t'` for one tab).
 
         Returns
         -------
@@ -251,7 +246,7 @@ class TransdocTransformer:
                         filename,
                         SourceRange(start, end),
                         indentation,
-                    )
+                    ),
                 )
             except TransdocTransformationError as e:
                 errors.append(e)
@@ -272,7 +267,7 @@ class TransdocTransformer:
         )
         if unclosed := unclosed_regex.search(input):
             unclosed_pos = position_offset.offset_by_str(
-                input[: unclosed.start()]
+                input[: unclosed.start()],
             )
             range = SourceRange(unclosed_pos, unclosed_pos + SourcePos(0, 2))
             errors.append(
@@ -280,13 +275,11 @@ class TransdocTransformer:
                     filename,
                     range,
                     "Unclosed rule call. Did you forget a closing '}}'?",
-                )
+                ),
             )
 
         if len(errors):
-            raise ExceptionGroup(
-                "Errors occurred while transforming string", errors
-            )
+            raise TransdocTransformExceptionGroup(errors)
 
         output.seek(0)
         return output.read()

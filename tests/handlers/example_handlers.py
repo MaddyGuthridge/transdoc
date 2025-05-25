@@ -1,10 +1,10 @@
-"""
-# Tests / Handlers / Example handlers
+"""# Tests / Handlers / Example handlers
 
 Simple Transdoc handlers used for testing.
 """
 
 from typing import IO
+
 import transdoc
 from transdoc.handlers.api import TransdocHandler
 
