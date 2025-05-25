@@ -4,7 +4,9 @@ A Transdoc handler for plain-text files.
 """
 
 from pathlib import Path
-from typing import IO, override
+from typing import IO
+
+from typing_extensions import override
 
 from transdoc.__transformer import TransdocTransformer
 from transdoc.handlers import TransdocHandler

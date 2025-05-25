@@ -3,7 +3,9 @@
 Simple Transdoc handlers used for testing.
 """
 
-from typing import IO, override
+from typing import IO
+
+from typing_extensions import override
 
 import transdoc
 from transdoc.handlers.api import TransdocHandler

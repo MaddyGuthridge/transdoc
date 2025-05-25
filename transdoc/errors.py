@@ -6,7 +6,9 @@ Definitions for error classes used by Transdoc.
 from collections.abc import Sequence
 from importlib.metadata import EntryPoint
 from pathlib import Path
-from typing import Any, override
+from typing import Any
+
+from typing_extensions import override
 
 from transdoc.source_pos import SourceRange
 
