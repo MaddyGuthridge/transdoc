@@ -205,14 +205,14 @@ markers = {main = "platform_system == \"Windows\"", ci = "sys_platform == \"win3
 
 [[package]]
 name = "colored"
-version = "2.2.5"
+version = "2.3.1"
 description = "Simple python library for color and formatting to terminal"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "colored-2.2.5-py3-none-any.whl", hash = "sha256:c5434a905c2a6edcc41d7fc5b540999368b4bd8281ecf1e9e9bbd21ff62a6695"},
-    {file = "colored-2.2.5.tar.gz", hash = "sha256:60cc61ea656cd3e753380fbc19fc62b0f65b60b2a096ba01bc476d6738ace441"},
+    {file = "colored-2.3.1-py3-none-any.whl", hash = "sha256:15d85396d6841f79534bf4668330b5e8686a5e58e730c84ada0e09d335b21fd1"},
+    {file = "colored-2.3.1.tar.gz", hash = "sha256:fe6e888e12dc16643daa0b108f785df6d0b48420084b5d0a567de27bb09a14d8"},
 ]
 
 [[package]]
