@@ -16,23 +16,23 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: '3.11'
-    - uses: Gr1N/setup-poetry@v9
-    - uses: actions/cache@v4
+
+    # Install dependencies using UV
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - run: poetry --version
-    - run: poetry install
+        enable-cache: true
+    - run: uv sync --all-groups
     - name: Test with pytest
       run: |
-        poetry run coverage run -m pytest
+        uv run coverage run -m pytest
     - name: Log code coverage
       run: |
-        poetry run coverage report
+        uv run coverage report
     - name: Generate code coverage report
       if: ${{ github.event_name == 'pull_request' }}
       run: |
-        poetry run coverage xml
+        uv run coverage xml
     - name: Create code coverage comment
       if: ${{ github.event_name == 'pull_request' }}
       uses: orgoro/coverage@v3
@@ -50,16 +50,16 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: '3.11'
-    - uses: Gr1N/setup-poetry@v9
-    - uses: actions/cache@v4
+
+    # Install dependencies using UV
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - run: poetry --version
-    - run: poetry install
+        enable-cache: true
+    - run: uv sync --all-groups
     - name: Lint with ruff
       run: |
-        poetry run ruff check
+        uv run ruff check
 
   Type-check:
     runs-on: ubuntu-latest
@@ -71,13 +71,13 @@ jobs:
       uses: actions/setup-python@v6
       with:
         python-version: '3.11'
-    - uses: Gr1N/setup-poetry@v9
-    - uses: actions/cache@v4
+
+    # Install dependencies using UV
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
       with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - run: poetry --version
-    - run: poetry install
+        enable-cache: true
+    - run: uv sync --all-groups
     - name: Lint with mypy
       run: |
-        poetry run mypy
+        uv run mypy
