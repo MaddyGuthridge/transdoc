@@ -31,7 +31,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-      - run: uv sync --all-groups
+      - run: uv sync --group docs
 
       # Build documentation to ./site/ directory
       - name: Build Documentation
