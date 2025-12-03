@@ -4,9 +4,16 @@ Transform your documentation by embedding results from Python function calls.
 
 ## Installation
 
-`pip install transdoc`
+Use your Python dependency manager of choice:
 
-To install handlers for Python, run `pip install transdoc[python]` instead.
+```sh
+uv add transdoc
+poetry add transdoc
+pip install transdoc
+# etc
+```
+
+To install handlers for Python, install `transdoc[python]` instead.
 
 ## Documentation
 
