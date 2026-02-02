@@ -5,10 +5,12 @@ Process an entire directory tree (or a single file) using transdoc.
 
 import logging
 import os
+import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import copyfile, rmtree
+from typing import IO, Literal
 
 from transdoc.__transformer import TransdocTransformer
 from transdoc.errors import (
@@ -23,14 +25,20 @@ from transdoc.handlers.api import TransdocHandler
 log = logging.getLogger("transdoc.transform_tree")
 
 
+OutputFileType = Path | Literal["stdout", "devnull"]
+
+
 @dataclass
 class FileMapping:
     """Mapping between an input and output pair of files"""
 
     input: Path
     """Input file"""
-    output: Path | None
-    """Output file, or `None` if no output should be produced"""
+    output: OutputFileType
+    """
+    Output file, "stdout" to write to stdout, or "devnull" to produce no
+    output.
+    """
 
 
 def expand_tree(
@@ -55,7 +63,9 @@ def expand_tree(
             for filename in filenames:
                 in_file = Path(dirpath).joinpath(filename)
                 if output is None:
-                    out_file = None
+                    out_file: OutputFileType = "devnull"
+                elif output == Path("-"):
+                    out_file = "stdout"
                 else:
                     out_file = output.joinpath(in_file.relative_to(input))
                 file_mappings.append(
@@ -65,7 +75,13 @@ def expand_tree(
                     ),
                 )
     else:
-        file_mappings.append(FileMapping(input, output))
+        if output is None:
+            out_file = "devnull"
+        elif output == Path("-"):
+            out_file = "stdout"
+        else:
+            out_file = output
+        file_mappings.append(FileMapping(input, out_file))
 
     return file_mappings
 
@@ -142,7 +158,7 @@ def transform_tree(
             continue
 
         # If we intend to output files, we should first create parent dirs
-        if mapping.output is not None:
+        if isinstance(mapping.output, Path):
             mapping.output.parent.mkdir(parents=True, exist_ok=True)
 
         handler = find_matching_handler(handlers, str(mapping.input))
@@ -161,7 +177,18 @@ def transform_tree(
             log.info(f"Using handler {handler} to process {mapping.input}")
             # Now open files
             in_file = open(mapping.input)  # noqa: SIM115
-            out_file = open(mapping.output, "w") if mapping.output else None  # noqa: SIM115
+            if isinstance(mapping.output, Path):
+                out_file: IO | None = (
+                    open(mapping.output, "w") if mapping.output else None  # noqa: SIM115
+                )
+            elif mapping.output == "stdout":
+                # Only show filenames if there are multiple input files
+                if len(file_mappings) > 1:
+                    print(f"### {mapping.input} ###", file=sys.stderr)
+                out_file = sys.stdout
+            else:  # mapping.output == "devnull"
+                out_file = None
+
             # And perform the transformation
             try:
                 handler.transform_file(

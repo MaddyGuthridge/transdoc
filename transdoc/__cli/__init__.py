@@ -81,7 +81,7 @@ def handle_verbose(verbose: int):
 @click.option(
     "-o",
     "--output",
-    type=click.Path(exists=False, path_type=Path),
+    type=click.Path(exists=False, path_type=Path, allow_dash=True),
     help="Path to the output file or directory.",
     cls=Mutex,
     mutex_with=["dryrun"],
