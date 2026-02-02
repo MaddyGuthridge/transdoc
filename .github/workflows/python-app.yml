@@ -51,6 +51,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - run: uv sync --group ci
       - name: Test with pytest
         run: |
           uv run pytest
@@ -69,6 +70,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - run: uv sync --group ci
       - name: Pytest with coverage
         run: |
           uv run coverage run -m pytest
@@ -100,6 +102,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - run: uv sync --group ci
       - name: Lint with ruff
         run: |
           uv run ruff check
@@ -118,6 +121,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - run: uv sync --group ci
       - name: Type-check with mypy
         run: |
           uv run mypy
