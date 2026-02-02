@@ -20,11 +20,11 @@ jobs:
           submodules: true
 
       # Setup Python
-      - name: Setup Python
-        id: python
+      - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          # Pinned Python version
+          python-version-file: ".python-version"
 
       # Install dependencies using UV
       - name: Install uv
