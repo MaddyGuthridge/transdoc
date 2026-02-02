@@ -37,6 +37,25 @@ def test_transforms_directory(transformer: TransdocTransformer):
         im.verify()
 
 
+def test_skips_files_using_lambda(transformer: TransdocTransformer):
+    """Creates an output directory if one does not exist, then transforms files
+    into it
+    """
+
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    transform_tree(
+        [PlaintextHandler()],
+        transformer,
+        Path("tests/data/directory"),
+        temp,
+        skip_if=lambda p: p.name == "skip.txt",
+    )
+    assert temp.is_dir()
+    # Test all files were created correctly
+    assert not (temp / "skip.txt").exists()
+
+
 def test_transforms_single_file(transformer: TransdocTransformer):
     """Creates an output directory if one does not exist, then transforms files
     into it

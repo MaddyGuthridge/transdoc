@@ -5,7 +5,7 @@ Process an entire directory tree (or a single file) using transdoc.
 
 import logging
 import os
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import copyfile, rmtree
@@ -20,7 +20,7 @@ from transdoc.errors import (
 from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
 
-log = logging.getLogger("transdoc.tree_transform")
+log = logging.getLogger("transdoc.transform_tree")
 
 
 @dataclass
@@ -77,6 +77,7 @@ def transform_tree(
     output: Path | None,
     *,
     force: bool = False,
+    skip_if: Callable[[Path], bool] = lambda _: False,
 ) -> None:
     """Transform all files within a tree.
 
@@ -101,6 +102,9 @@ def transform_tree(
     force : bool, optional = False
         Whether to remove the output if it already exists, rather than
         erroring. Defaults to `False`.
+    skip_if : Callable[[Path], bool], optional = lambda _: False
+        A callback to determine whether a file should be excluded from
+        transformation. For example, to skip files that are gitignored.
 
     Raises
     ------
@@ -132,8 +136,11 @@ def transform_tree(
 
     errors: list[TransdocTransformationError] = []
 
-    # Consider using threading to speed this process up
+    # TODO: Consider using threading to speed this process up
     for mapping in file_mappings:
+        if skip_if(mapping.input):
+            continue
+
         # If we intend to output files, we should first create parent dirs
         if mapping.output is not None:
             mapping.output.parent.mkdir(parents=True, exist_ok=True)
