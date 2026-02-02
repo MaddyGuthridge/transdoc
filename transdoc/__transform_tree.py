@@ -11,7 +11,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from shutil import copyfile, rmtree
-from typing import IO, Literal
+from typing import IO, AnyStr, Literal
 
 from transdoc.__transformer import TransdocTransformer
 from transdoc.errors import (
@@ -95,7 +95,7 @@ def transform_tree(
     output: Path | None,
     *,
     force: bool = False,
-    skip_if: Callable[[Path], bool] | re.Pattern = lambda _: False,
+    skip_if: Callable[[Path], bool] | re.Pattern[AnyStr] = lambda _: False,
 ) -> None:
     """Transform all files within a tree.
 
