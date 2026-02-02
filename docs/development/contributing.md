@@ -9,9 +9,7 @@ This project uses [`uv`](https://docs.astral.sh/uv/) as a package manager.
 Install dependencies
 
 ```sh
-# Generally, you won't want to install the `python` group, as it breaks the test
-# suite. Tests for that are found over in the transdoc-python repo.
-uv sync --group ci --group docs
+uv sync
 ```
 
 Run linting
