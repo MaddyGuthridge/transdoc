@@ -139,7 +139,9 @@ def transform_tree(
         def make_regex_matcher(regex: re.Pattern):
             return lambda p: regex.search(str(p)) is not None
 
-        skip_if = make_regex_matcher(skip_if)
+        skip_callback = make_regex_matcher(skip_if)
+    else:
+        skip_callback = skip_if
 
     if not force and output is not None and output.exists():
         if output.is_dir():
@@ -163,7 +165,7 @@ def transform_tree(
 
     # TODO: Consider using threading to speed this process up
     for mapping in file_mappings:
-        if skip_if(mapping.input):
+        if skip_callback(mapping.input):
             continue
 
         # Only show filenames if there are multiple input files
