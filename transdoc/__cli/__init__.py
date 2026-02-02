@@ -5,6 +5,7 @@ Main entrypoint to the Transdoc CLI.
 
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 from typing import IO
@@ -100,6 +101,15 @@ def handle_verbose(verbose: int):
     cls=Mutex,
     mutex_with=["dryrun"],
 )
+@click.option(
+    "--skip-if",
+    type=re.Pattern,
+    help=(
+        "Skip files that match the given regex pattern. In most shells, you "
+        "may need to use 'single quotes' around regular expressions with "
+        "special characters."
+    ),
+)
 @click.option("-v", "--verbose", count=True)
 @click.version_option(VERSION)
 def cli(
@@ -109,6 +119,7 @@ def cli(
     *,
     dryrun: bool = False,
     force: bool = False,
+    skip_if: re.Pattern | None = None,
     verbose: int = 0,
 ) -> int:
     """CLI entrypoint"""
@@ -144,6 +155,14 @@ def cli(
         if output is None and not dryrun:
             print("--output must be given if --dryrun is not specified")
             return 2
+
+        def skip_callback(p: Path):
+            """Whether to skip the given path"""
+            if skip_if is None:
+                return False
+            else:
+                return skip_if.search(str(p)) is not None
+
         try:
             transform_tree(
                 handlers,
@@ -151,6 +170,7 @@ def cli(
                 Path(input),
                 output,
                 force=force,
+                skip_if=skip_callback,
             )
         except ExceptionGroup as e:
             print_error(e)
