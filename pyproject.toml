@@ -24,6 +24,9 @@ dependencies = [
     "typing-extensions (>=4.13.2,<5.0.0)",
 ]
 
+[project.optional-dependencies]
+python = ["transdoc-python>=0.1.4"]
+
 [project.urls]
 homepage = "https://maddyguthridge.github.io/transdoc"
 repository = "https://github.com/MaddyGuthridge/transdoc"
@@ -42,6 +45,10 @@ module-name = "transdoc"
 module-root = ""
 
 [dependency-groups]
+dev = [
+  {include-group = "ci"},
+  {include-group = "docs"}
+]
 ci = [
     "pytest>=7.4.4,<10.0.0",
     "mypy>=1.19.0",
@@ -58,7 +65,6 @@ docs = [
     "mkdocstrings[python]>=0.30.0",
     "mkdocs-awesome-pages-plugin>=2.10.1",
 ]
-python = ["transdoc-python>=0.1.4"]
 
 [tool.mypy]
 check_untyped_defs = true
