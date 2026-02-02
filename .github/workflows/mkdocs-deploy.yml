@@ -3,6 +3,12 @@ on:
   # Documentation can be either manually updated or is automatically updated when pushed to main branch
   workflow_dispatch:
   push:
+    paths:
+      - 'transdoc/**'
+      - 'docs/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'mkdocs.yml'
     branches:
       - main
 
