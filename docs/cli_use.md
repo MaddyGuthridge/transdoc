@@ -4,12 +4,12 @@ Transdoc can be accessed using a CLI with the `transdoc` command.
 
 ```bash
 $ transdoc --version
-transdoc, version 1.0.0
+transdoc, version 1.2.0
 ```
 
 ## Rule file
 
-You can specify a Python file containing the Transdoc rules you wish to use
+You must specify a Python file containing the Transdoc rules you wish to use
 while transforming your documentation using the `-r` flag.
 
 ```bash
@@ -19,24 +19,26 @@ $ transdoc -r path/to/rules.py
 
 ## Input files
 
-You can specify an input file or directory as the primary argument.
+You must specify an input file or directory as the primary argument.
 
 ```bash
-$ transdoc input.txt
+$ transdoc input.txt -r path/to/rules.py
 ...
 ```
 
-If a file is given, its transformed output will be written to `stdout`.
-Otherwise, you must specify an output directory, or use the `--dryrun` flag.
+If `-` is given as an input path, input will be read from `stdin`.
 
 ## Output files
 
 By using the `-o` flag, you can specify your intended output file/directory.
 
 ```bash
-$ transdoc input.txt -o output.txt
+$ transdoc input.txt -o output.txt -r path/to/rules.py
 ...
 ```
+
+If `-` is given as an output path, output will be written to `stdout`.
+Otherwise, you must specify an output path or give the `--dryrun` flag.
 
 ## Other options
 
@@ -45,11 +47,12 @@ $ transdoc input.txt -o output.txt
   evaluation will still occur.
 * `--force`: always overwrite the output file/directory, regardless of whether
   it contains data.
+* `--skip-if`: skip over files that match the given regular expression.
 * `-v`, `-vv`, `-vvv`: control verbosity of logging.
 * `--help`: show help information
 * `--version`: show version information
 
 ### Additional notes
 
-You can disable the pride flags in the `--help` output by using the `NO_PRIDE`
-environment variable.
+You cannot disable the pride flags in the `--help` output by using the
+`NO_PRIDE` environment variable.
