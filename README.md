@@ -18,3 +18,8 @@ To install handlers for Python, install `transdoc[python]` instead.
 ## Documentation
 
 View the documentation at <https://maddyguthridge.github.io/transdoc>.
+
+## Contributing
+
+I'd love to have your contributions!
+[View the contributor documentation](https://maddyguthridge.github.io/transdoc/development/contributing/).
