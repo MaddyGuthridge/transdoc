@@ -54,6 +54,7 @@ def test_skips_files_using_lambda(transformer: TransdocTransformer):
     assert temp.is_dir()
     # Test all files were created correctly
     assert not (temp / "skip.txt").exists()
+    assert (temp / "README.md").is_file()
 
 
 def test_transforms_single_file(transformer: TransdocTransformer):
