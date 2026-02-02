@@ -94,7 +94,6 @@ select = [
     "N",
 
     # Comments and documentation
-    "TD", # Be diligent with TODO comments
     "D",  # Enforce documentation style
 ]
 
