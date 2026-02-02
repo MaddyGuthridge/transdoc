@@ -5,6 +5,7 @@ Process an entire directory tree (or a single file) using transdoc.
 
 import logging
 import os
+import re
 import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -94,7 +95,7 @@ def transform_tree(
     output: Path | None,
     *,
     force: bool = False,
-    skip_if: Callable[[Path], bool] = lambda _: False,
+    skip_if: Callable[[Path], bool] | re.Pattern = lambda _: False,
 ) -> None:
     """Transform all files within a tree.
 
@@ -132,6 +133,13 @@ def transform_tree(
         Any exceptions that occurred while transforming the files.
     """
     file_mappings = expand_tree(input, output)
+    # If skip_if is a regex, turn it into a function
+    if isinstance(skip_if, re.Pattern):
+
+        def make_regex_matcher(regex: re.Pattern):
+            return lambda p: regex.search(str(p)) is not None
+
+        skip_if = make_regex_matcher(skip_if)
 
     if not force and output is not None and output.exists():
         if output.is_dir():

@@ -3,6 +3,7 @@
 Test cases for `transdoc.transform_tree`
 """
 
+import re
 from pathlib import Path
 from shutil import rmtree
 
@@ -50,6 +51,26 @@ def test_skips_files_using_lambda(transformer: TransdocTransformer):
         Path("tests/data/directory"),
         temp,
         skip_if=lambda p: p.name == "skip.txt",
+    )
+    assert temp.is_dir()
+    # Test all files were created correctly
+    assert not (temp / "skip.txt").exists()
+    assert (temp / "README.md").is_file()
+
+
+def test_skips_files_using_regex(transformer: TransdocTransformer):
+    """Creates an output directory if one does not exist, then transforms files
+    into it
+    """
+
+    temp = Path("temp")
+    rmtree(temp, ignore_errors=True)
+    transform_tree(
+        [PlaintextHandler()],
+        transformer,
+        Path("tests/data/directory"),
+        temp,
+        skip_if=re.compile(r"skip\.txt"),
     )
     assert temp.is_dir()
     # Test all files were created correctly
