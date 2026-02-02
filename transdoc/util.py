@@ -4,6 +4,7 @@ Utility functions for Transdoc.
 """
 
 import sys
+from pathlib import Path
 
 from colored import Fore, Style
 
@@ -57,3 +58,29 @@ def print_error(e: Exception):
             f"{Fore.RED}{type(e).__name__}{Style.RESET}: {error_args(e.args)}",
             file=sys.stderr,
         )
+
+
+__textchars = bytearray(
+    {7, 8, 9, 10, 12, 13, 27} | set(range(0x20, 0x100)) - {0x7F},
+)
+
+
+def file_is_binary(p: Path):
+    """
+    Return whether the given file is binary.
+
+    If any non-printable characters are contained in the first 1024 bytes, this
+    returns True, as per the UNIX `file` program behaviour.
+
+    Sources:
+    * https://github.com/file/file/blob/f2a6e7cb7db9b5fd86100403df6b2f830c7f22ba/src/encoding.c#L151-L228
+    * https://stackoverflow.com/a/7392391/6335363
+
+    Parameters
+    ----------
+    p : Path
+        Path of file to check
+    """
+    with open(p, "rb") as f:
+        b = f.read(1024)
+    return bool(b.translate(None, __textchars))

@@ -103,7 +103,6 @@ def handle_verbose(verbose: int):
 )
 @click.option(
     "--skip-if",
-    type=re.Pattern,
     help=(
         "Skip files that match the given regex pattern. In most shells, you "
         "may need to use 'single quotes' around regular expressions with "
@@ -119,7 +118,7 @@ def cli(
     *,
     dryrun: bool = False,
     force: bool = False,
-    skip_if: re.Pattern | None = None,
+    skip_if: str | None = None,
     verbose: int = 0,
 ) -> int:
     """CLI entrypoint"""
@@ -161,7 +160,7 @@ def cli(
             if skip_if is None:
                 return False
             else:
-                return skip_if.search(str(p)) is not None
+                return re.search(skip_if, str(p)) is not None
 
         try:
             transform_tree(

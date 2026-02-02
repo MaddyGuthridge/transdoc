@@ -21,6 +21,7 @@ from transdoc.errors import (
 )
 from transdoc.handlers import find_matching_handler
 from transdoc.handlers.api import TransdocHandler
+from transdoc.util import file_is_binary
 
 log = logging.getLogger("transdoc.transform_tree")
 
@@ -157,6 +158,10 @@ def transform_tree(
         if skip_if(mapping.input):
             continue
 
+        # Only show filenames if there are multiple input files
+        if mapping.output == "stdout" and len(file_mappings) > 1:
+            print(f"\n\n### {mapping.input} ###", file=sys.stderr)
+
         # If we intend to output files, we should first create parent dirs
         if isinstance(mapping.output, Path):
             mapping.output.parent.mkdir(parents=True, exist_ok=True)
@@ -164,9 +169,17 @@ def transform_tree(
         handler = find_matching_handler(handlers, str(mapping.input))
         if handler is None:
             # No handlers found, just copy file
-            if mapping.output:
+            if isinstance(mapping.output, Path):
                 act = "copying"
                 copyfile(mapping.input, mapping.output)
+            elif mapping.output == "stdout":
+                act = "printing"
+                # Only write plaintext files
+                if file_is_binary(mapping.input):
+                    print("[ binary file ]")
+                else:
+                    with open(mapping.input) as f:
+                        print(f.read())
             else:
                 act = "skipping"
             log.info(
@@ -182,9 +195,6 @@ def transform_tree(
                     open(mapping.output, "w") if mapping.output else None  # noqa: SIM115
                 )
             elif mapping.output == "stdout":
-                # Only show filenames if there are multiple input files
-                if len(file_mappings) > 1:
-                    print(f"### {mapping.input} ###", file=sys.stderr)
                 out_file = sys.stdout
             else:  # mapping.output == "devnull"
                 out_file = None
