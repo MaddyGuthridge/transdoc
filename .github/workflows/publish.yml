@@ -36,8 +36,9 @@ jobs:
           echo "pkg_name=$PKG_NAME" >> $GITHUB_OUTPUT
 
       - name: Build package
-        run: uv build
+        run: uv build --package ${{ steps.extract.outputs.pkg_name }}
       - name: Publish package
-        # Specifically, we are publishing the package whose name we extracted 
-        # earlier
-        run: uv publish --project ${{ steps.extract.outputs.pkg_name }} -t ${{ secrets.PYPI_API_TOKEN }}
+        # Only this package will have been built, so we can safely publish all 
+        # of dist/* without worrying about accidentally publishing other random
+        # artifacts.
+        run: uv publish

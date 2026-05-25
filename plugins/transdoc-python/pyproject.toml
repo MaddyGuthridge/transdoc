@@ -28,9 +28,9 @@ transdoc = { workspace = true }
 
 [project.urls]
 homepage = "https://maddyguthridge.github.io/transdoc/handlers"
-repository = "https://github.com/MaddyGuthridge/transdoc-python"
+repository = "https://github.com/MaddyGuthridge/transdoc"
 documentation = "https://maddyguthridge.github.io/transdoc/handlers"
-"Bug Tracker" = "https://github.com/MaddyGuthridge/transdoc-python/issues"
+"Bug Tracker" = "https://github.com/MaddyGuthridge/transdoc/issues"
 
 [build-system]
 requires = ["uv_build>=0.7.20,<0.12.0"]
