@@ -8,16 +8,16 @@ from inspect import getsource
 
 import jestspectation as expect
 import pytest
-from transdoc import TransdocTransformer, get_all_handlers, transform
-
 from transdoc_python import TransdocPythonHandler
+
+from transdoc import TransdocTransformer, get_all_handlers, transform
 
 
 def test_transdoc_python_is_registered():
     """The handler is automatically registered with Transdoc"""
     handlers = get_all_handlers()
     assert handlers == expect.ListContaining(
-        [expect.Any(TransdocPythonHandler)]
+        [expect.Any(TransdocPythonHandler)],
     )
 
 
@@ -61,7 +61,7 @@ def err(msg: str) -> str:
 
     Example: {{err[An intentional error]}}
     """
-    raise Exception(msg)
+    raise Exception(msg)  # noqa: TRY002
 
 
 def test_gracefully_handles_errors():
@@ -70,7 +70,7 @@ def test_gracefully_handles_errors():
     """
     transformer = TransdocTransformer({"err": err})
     with pytest.raises(ExceptionGroup) as excinfo:
-        transform(
+        _ = transform(
             transformer,
             getsource(err),
             path="err.py",

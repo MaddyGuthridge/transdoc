@@ -1075,6 +1075,7 @@ ci = [
     { name = "pytest" },
     { name = "pytest-mock" },
     { name = "ruff" },
+    { name = "transdoc-python" },
 ]
 dev = [
     { name = "coverage" },
@@ -1088,6 +1089,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-mock" },
     { name = "ruff" },
+    { name = "transdoc-python" },
 ]
 docs = [
     { name = "mkdocs" },
@@ -1114,6 +1116,7 @@ ci = [
     { name = "pytest", specifier = ">=7.4.4,<10.0.0" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "ruff", specifier = ">=0.14.3" },
+    { name = "transdoc-python", editable = "plugins/transdoc-python" },
 ]
 dev = [
     { name = "coverage", specifier = ">=7.12.0" },
@@ -1127,6 +1130,7 @@ dev = [
     { name = "pytest", specifier = ">=7.4.4,<10.0.0" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
     { name = "ruff", specifier = ">=0.14.3" },
+    { name = "transdoc-python", editable = "plugins/transdoc-python" },
 ]
 docs = [
     { name = "mkdocs", specifier = ">=1.6.1" },

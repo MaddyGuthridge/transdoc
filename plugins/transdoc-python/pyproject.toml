@@ -32,40 +32,6 @@ repository = "https://github.com/MaddyGuthridge/transdoc-python"
 documentation = "https://maddyguthridge.github.io/transdoc/handlers"
 "Bug Tracker" = "https://github.com/MaddyGuthridge/transdoc-python/issues"
 
-[tool.mypy]
-check_untyped_defs = true
-files = ["transdoc_python", "tests"]
-
-[tool.ruff]
-line-length = 79
-
-[tool.ruff.lint]
-select = [
-    # pycodestyle
-    "E",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
-]
-
-[tool.coverage.run]
-branch = true
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:",
-    "return NotImplemented",
-    "@overload",
-]
-
 [build-system]
 requires = ["uv_build>=0.7.20,<0.12.0"]
 build-backend = "uv_build"

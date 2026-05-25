@@ -8,14 +8,15 @@ documentation.
 from importlib.metadata import version
 from logging import getLogger
 from pathlib import Path
-from typing import IO
+from typing import IO, Any
 
 import libcst
 import libcst as cst
 from libcst import MetadataWrapper
+from typing_extensions import override
+
 from transdoc import TransdocHandler, TransdocTransformer
 from transdoc.source_pos import SourcePos
-
 from transdoc_python.__visitor import DocstringVisitor
 
 __version__ = version("transdoc-python")
@@ -25,31 +26,32 @@ log = getLogger("transdoc-python")
 
 
 class TransdocPythonHandler:
-    """
-    A Transdoc handler for Python docstrings.
-    """
+    """A Transdoc handler for Python docstrings."""
 
+    @override
     def __repr__(self) -> str:
         return "TransdocPythonHandler"
 
     def matches_file(self, file_path: str) -> bool:
+        """Return whether the given file matches."""
         return Path(file_path).suffix in [".py", ".pyi"]
 
     def transform_file(
         self,
         transformer: TransdocTransformer,
         in_path: str,
-        in_file: IO,
-        out_file: IO | None,
+        in_file: IO[Any],
+        out_file: IO[Any] | None,
     ) -> None:
-        input_text = in_file.read()
+        """Transform the given file using the given transformer."""
+        input_text: str = in_file.read()
         try:
             parsed = MetadataWrapper(cst.parse_module(input_text))
             visitor = DocstringVisitor(transformer, in_path)
             updated_cst = parsed.visit(visitor)
             visitor.raise_errors()
             if out_file is not None:
-                out_file.write(updated_cst.code)
+                _ = out_file.write(updated_cst.code)
         except libcst.ParserSyntaxError:
             # Error while parsing the file
             # Just copy the file instead. We can safely transform it, since
@@ -61,13 +63,15 @@ class TransdocPythonHandler:
             # TODO: More-integrated way to warn of this
             log.warning(
                 f"{in_path} failed to parse using libcst. "
-                f"Transforming file as plaintext instead."
+                + "Transforming file as plaintext instead.",
             )
             if out_file is not None:
-                out_file.write(
+                _ = out_file.write(
                     transformer.transform(
-                        input_text, in_path, SourcePos(1, 0)
-                    )
+                        input_text,
+                        in_path,
+                        SourcePos(1, 0),
+                    ),
                 )
 
 

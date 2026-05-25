@@ -6,45 +6,44 @@ LibCST visitor
 
 import libcst as cst
 from libcst.metadata import PositionProvider
+from typing_extensions import override
+
 from transdoc import TransdocTransformer
 from transdoc.source_pos import SourcePos
 
 
 class DocstringVisitor(cst.CSTTransformer):
-    """
-    Rewrite documentation.
-    """
+    """Rewrite documentation."""
 
     METADATA_DEPENDENCIES = (PositionProvider,)
 
     def __init__(
-        self, transformer: TransdocTransformer, filename: str
+        self,
+        transformer: TransdocTransformer,
+        filename: str,
     ) -> None:
-        """
-        Create an instance of the doc transformer module
-        """
+        """Create an instance of the doc transformer module."""
+        super().__init__()
         self.__transformer = transformer
         self.__filename = filename
         self.__errors: list[Exception] = []
 
     def raise_errors(self) -> None:
-        """
-        If any errors occurred when visiting the code, raise them.
-        """
+        """If any errors occurred when visiting the code, raise them."""
         if len(self.__errors):
-            raise ExceptionGroup(
+            raise ExceptionGroup(  # noqa: TRY003
                 f"Errors occurred when transforming file {self.__filename}",
                 self.__errors,
             )
 
+    @override
     def leave_SimpleString(
         self,
         original_node: cst.SimpleString,
         updated_node: cst.SimpleString,
     ) -> cst.BaseExpression:
         """
-        After visiting a string, check if it is a triple-quoted string. If so,
-        apply formatting to it.
+        Apply formatting to triple-quoted strings.
 
         Currently, I'm assuming that all triple-quoted strings are docstrings
         so that we can handle attribute docstrings (which otherwise don't work
