@@ -10,7 +10,7 @@ Transdoc represents rule-sets using `TransdocTransformer` objects.
 
 ## Collecting handlers
 
-[Handlers](./handlers.md) are used to handle various file-types to ensure
+[Handlers](./handlers/index.md) are used to handle various file-types to ensure
 information is transformed correctly (eg by preventing nested sets from being
 transformed in Python source code).
 

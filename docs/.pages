@@ -3,7 +3,7 @@ nav:
     - Builtin rules: builtins.md
     - Using the Transdoc CLI: cli_use.md
     - Using Transdoc as a Python library: library_use.md
-    - Language handlers: handlers.md
+    - Handlers: handlers
     - Recipes: recipes.md
     - Development: development
     - ...

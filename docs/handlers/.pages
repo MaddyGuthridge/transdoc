@@ -1,0 +1,4 @@
+nav:
+  - index.md
+  - Plaintext: plaintext.md
+  - Python: python.md
