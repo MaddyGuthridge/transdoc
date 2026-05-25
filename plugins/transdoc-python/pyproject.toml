@@ -1,0 +1,75 @@
+[project]
+name = "transdoc-python"
+version = "0.1.4"
+description = "A Transdoc handler for Python docstrings"
+authors = [{ name = "Maddy Guthridge", email = "hello@maddyguthridge.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "libcst (>=1.6.0,<2.0.0)",
+    "transdoc (>=1.0.0,<2.0.0)",
+]
+
+[project.entry-points.'transdoc.handlers']
+python = 'transdoc_python:TransdocPythonHandler'
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.7",
+    "mypy>=1.19.0",
+    "pytest>=9.0.1",
+    "jestspectation>=1.4.5",
+    "coverage>=7.12.0",
+]
+
+[tool.uv.sources]
+transdoc = { workspace = true }
+
+[project.urls]
+homepage = "https://maddyguthridge.github.io/transdoc/handlers"
+repository = "https://github.com/MaddyGuthridge/transdoc-python"
+documentation = "https://maddyguthridge.github.io/transdoc/handlers"
+"Bug Tracker" = "https://github.com/MaddyGuthridge/transdoc-python/issues"
+
+[tool.mypy]
+check_untyped_defs = true
+files = ["transdoc_python", "tests"]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "return NotImplemented",
+    "@overload",
+]
+
+[build-system]
+requires = ["uv_build>=0.7.20,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "transdoc_python"
+module-root = ""

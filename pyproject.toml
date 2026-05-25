@@ -43,6 +43,12 @@ build-backend = "uv_build"
 module-name = "transdoc"
 module-root = ""
 
+[tool.uv.workspace]
+members = ["plugins/*"]
+
+[tool.uv.sources]
+transdoc-python = { workspace = true }
+
 [dependency-groups]
 dev = [
   {include-group = "ci"},

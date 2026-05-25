@@ -7,6 +7,13 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
+[manifest]
+members = [
+    "transdoc",
+    "transdoc-hatch",
+    "transdoc-python",
+]
+
 [[package]]
 name = "babel"
 version = "2.18.0"
@@ -1093,7 +1100,7 @@ docs = [
 requires-dist = [
     { name = "click", specifier = ">=8.1.7,<9" },
     { name = "colored", specifier = ">=2.2.5,<3.0.0" },
-    { name = "transdoc-python", marker = "extra == 'python'", specifier = ">=0.1.4" },
+    { name = "transdoc-python", marker = "extra == 'python'", editable = "plugins/transdoc-python" },
     { name = "typing-extensions", specifier = ">=4.13.2,<5.0.0" },
 ]
 provides-extras = ["python"]
@@ -1129,16 +1136,41 @@ docs = [
 ]
 
 [[package]]
+name = "transdoc-hatch"
+version = "0.1.0"
+source = { virtual = "plugins/transdoc-hatch" }
+
+[[package]]
 name = "transdoc-python"
 version = "0.1.4"
-source = { registry = "https://pypi.org/simple" }
+source = { editable = "plugins/transdoc-python" }
 dependencies = [
     { name = "libcst" },
     { name = "transdoc" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c2/ed/7ea5b1dbc60c5208c23bea91af5c8e012528d6742def9e46775161b671e8/transdoc_python-0.1.4.tar.gz", hash = "sha256:b57710eb445e81a2484afc39bf7ab639ebe36bed37b19f551434e4354ca20590", size = 3804, upload-time = "2025-02-19T09:10:11.241Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6e/96/3260b5841ec967dac69a5dda7412cd674a3f150573b47c5c63918dc02289/transdoc_python-0.1.4-py3-none-any.whl", hash = "sha256:b2ca4f89f37a1b7e7f967c3de803003228f24e0a636b83d6a6977f6c245e865e", size = 4914, upload-time = "2025-02-19T09:10:10.195Z" },
+
+[package.dev-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "jestspectation" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "libcst", specifier = ">=1.6.0,<2.0.0" },
+    { name = "transdoc", editable = "." },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", specifier = ">=7.12.0" },
+    { name = "jestspectation", specifier = ">=1.4.5" },
+    { name = "mypy", specifier = ">=1.19.0" },
+    { name = "pytest", specifier = ">=9.0.1" },
+    { name = "ruff", specifier = ">=0.14.7" },
 ]
 
 [[package]]
