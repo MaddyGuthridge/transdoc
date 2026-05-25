@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v6
       - name: Install uv
@@ -19,7 +22,23 @@ jobs:
         with:
           # Pinned Python version
           python-version-file: ".python-version"
+      - name: Extract Package Name
+        id: extract
+        run: |
+          # Extracts "transdoc" from a release tag named "transdoc@v1.2.3"
+          TAG=${{ github.event.release.tag_name }}
+          PKG_NAME=$(echo "$TAG" | cut -d'@' -f1)
+
+          # Ensure the project exists. If $PKG_NAME not in workspace list, then
+          # the tag is invalid
+          uv workspace list | grep $PKG_NAME
+
+          echo "pkg_name=$PKG_NAME" >> $GITHUB_OUTPUT
+
       - name: Build package
-        run: uv build
+        run: uv build --package ${{ steps.extract.outputs.pkg_name }}
       - name: Publish package
-        run: uv publish -t ${{ secrets.PYPI_API_TOKEN }}
+        # Only this package will have been built, so we can safely publish all 
+        # of dist/* without worrying about accidentally publishing other random
+        # artifacts.
+        run: uv publish
