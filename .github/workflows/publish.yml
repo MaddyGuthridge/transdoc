@@ -16,7 +16,8 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          enable-cache: true
+          # Intentionally disabled to prevent poisoning
+          enable-cache: false
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
