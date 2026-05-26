@@ -11,21 +11,9 @@ name: Test and Lint
 
 on:
   pull_request:
-    paths:
-      - 'transdoc/**'
-      - 'tests/**'
-      - 'pyproject.toml'
-      - 'uv.lock'
-      - '.python-version'
     branches:
       - main
   push:
-    paths:
-      - 'transdoc/**'
-      - 'tests/**'
-      - 'pyproject.toml'
-      - 'uv.lock'
-      - '.python-version'
     branches:
       - main
 
