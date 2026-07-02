@@ -27,7 +27,7 @@ def batched(iterable: Sequence[T], n=1) -> Generator[Sequence[T], None, None]:
 # Flag colours from https://www.flagcolorcodes.com
 
 
-RESET = Style.reset
+RESET: str = Style.reset
 RAINBOW = [
     Fore.rgb(228, 3, 3),  # Red
     Fore.rgb(255, 140, 0),  # Orange
